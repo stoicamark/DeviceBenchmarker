@@ -1,7 +1,7 @@
 var path = require('path');
 
  module.exports = {
-   entry: './model/DeviceBenchmarker.ts',
+   entry: './test/ScoreAdjuster.test.ts',
    resolve: {
      extensions: ['.webpack.js', '.web.js', '.ts', '.js']
    },

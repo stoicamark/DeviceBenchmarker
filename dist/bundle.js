@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 3);
+/******/ 	return __webpack_require__(__webpack_require__.s = 2);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -71,7 +71,7 @@
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var Battery_1 = __webpack_require__(4);
-var Network_1 = __webpack_require__(2);
+var Network_1 = __webpack_require__(5);
 var Device = (function () {
     function Device() {
         this._battery = new Battery_1.Battery();
@@ -124,8 +124,352 @@ exports.Device = Device;
 
 
 /***/ }),
-/* 1 */,
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var PIDController = (function () {
+    function PIDController(options) {
+        this.k_d = options.k_d;
+        this.k_i = options.k_i;
+        this.k_p = options.k_p;
+        if (options.dt) {
+            this.dt = options.dt;
+        }
+        if (options.i_max) {
+            this.i_max = options.i_max;
+        }
+        this.dt = this.dt || 0;
+        this.i_max = this.i_max || 0;
+        this.sumError = 0;
+        this.lastError = 0;
+        this.lastTime = 0;
+        this.target = 0;
+    }
+    PIDController.prototype.setTarget = function (target) {
+        this.target = target;
+    };
+    PIDController.prototype.update = function (currentValue) {
+        this.currentValue = currentValue;
+        if (!this.dt) {
+            var currentTime = Date.now();
+            if (this.lastTime === 0) {
+                this.dt = 0;
+            }
+            else {
+                this.dt = (currentTime - this.lastTime) / 1000;
+            }
+            this.lastTime = currentTime;
+        }
+        var error = (this.target - this.currentValue);
+        this.sumError = this.sumError + error * this.dt;
+        if (this.i_max > 0 && Math.abs(this.sumError) > this.i_max) {
+            var sumSign = (this.sumError > 0) ? 1 : -1;
+            this.sumError = sumSign * this.i_max;
+        }
+        var dError = (error - this.lastError) / this.dt;
+        this.lastError = error;
+        return (this.k_p * error) + (this.k_i * this.sumError) + (this.k_d * dError);
+    };
+    PIDController.prototype.setSampling = function (sampling) {
+        this.dt = sampling;
+    };
+    PIDController.prototype.reset = function () {
+        this.sumError = 0;
+        this.lastError = 0;
+        this.lastTime = 0;
+    };
+    return PIDController;
+}());
+exports.PIDController = PIDController;
+
+
+/***/ }),
 /* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var ScoreAdjuster_1 = __webpack_require__(3);
+var Device_1 = __webpack_require__(0);
+var PIDController_1 = __webpack_require__(1);
+var device;
+var scoreAdjuster;
+var pidController;
+var x;
+var adjusterY;
+var oldtY;
+var ScoreAdjusterTester = (function () {
+    function ScoreAdjusterTester() {
+        this.linearOLDT = function (val) {
+            return 300;
+        };
+        this.exponentialOLDT = function (val) {
+            var constant = 20;
+            return Math.pow(constant, 2) - Math.pow(val, 2);
+        };
+        this.periodicOLDT = function (val) {
+            return 350 * Math.abs(Math.sin(val / 4));
+        };
+        this.randomOLDT = function (val) {
+            return 350 * Math.random();
+        };
+        this.setup();
+        this.drawTest({
+            title: 'Linear battery drain scenario',
+            domElementId: 'score-adjuster-test-linear',
+            batteryDrainFunction: this.linearOLDT
+        });
+        this.drawTest({
+            title: 'Exponential battery drain scenario',
+            domElementId: 'score-adjuster-test-exponential',
+            batteryDrainFunction: this.exponentialOLDT
+        });
+        this.drawTest({
+            title: 'Periodic battery drain scenario',
+            domElementId: 'score-adjuster-test-periodic',
+            batteryDrainFunction: this.periodicOLDT
+        });
+        this.drawTest({
+            title: 'Randromised battery drain scenario',
+            domElementId: 'score-adjuster-test-random',
+            batteryDrainFunction: this.randomOLDT
+        });
+    }
+    ScoreAdjusterTester.prototype.drawTest = function (testInfo) {
+        this.beforeEach();
+        for (var i = 0; i < 20; ++i) {
+            var oldtValue = testInfo.batteryDrainFunction(i);
+            scoreAdjuster._ctr.setSampling(testInfo.batteryDrainFunction(i));
+            scoreAdjuster.onLevelDropTimeChanged(oldtValue);
+            x.push(i);
+            adjusterY.push(scoreAdjuster.adjustment);
+            oldtY.push(oldtValue);
+        }
+        var adjusterTrace = {
+            x: x,
+            y: adjusterY,
+            name: 'adjuster trace',
+            type: 'scatter'
+        };
+        var oldtTrace = {
+            x: x,
+            y: oldtY,
+            xaxis: 'x2',
+            yaxis: 'y2',
+            name: 'OLDT trace',
+            type: 'scatter'
+        };
+        var layout = {
+            xaxis: {
+                title: 'sample',
+                type: 'number',
+            },
+            yaxis: {
+                title: 'adjustment',
+                type: 'number',
+                range: [-1.1, 1.1],
+                domain: [0, 0.45],
+            },
+            xaxis2: {
+                anchor: 'y2',
+                type: 'number'
+            },
+            yaxis2: {
+                title: 'One Level Drop Time',
+                type: 'number',
+                domain: [0.55, 1]
+            },
+            title: testInfo.title
+        };
+        var data = [adjusterTrace, oldtTrace];
+        Plotly.newPlot(testInfo.domElementId, data, layout);
+    };
+    ScoreAdjusterTester.prototype.beforeEach = function () {
+        x = [];
+        adjusterY = [];
+        oldtY = [];
+        scoreAdjuster._ctr.reset();
+    };
+    ScoreAdjusterTester.prototype.setup = function () {
+        device = new Device_1.Device();
+        device.battery = null;
+        scoreAdjuster = new ScoreAdjuster_1.ScoreAdjuster(device);
+        scoreAdjuster._ctr = new PIDController_1.PIDController({
+            k_p: 0.5,
+            k_i: 0.4,
+            k_d: 0.2,
+            i_max: 200
+        });
+        var targetOneLevelDropTime = 240;
+        scoreAdjuster._ctr.setTarget(targetOneLevelDropTime);
+    };
+    return ScoreAdjusterTester;
+}());
+new ScoreAdjusterTester();
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Device_1 = __webpack_require__(0);
+var PIDController_1 = __webpack_require__(1);
+var ScoreAdjuster = (function () {
+    function ScoreAdjuster(device) {
+        this._adjustment = 0;
+        this._device = device;
+        this._maxAdjustment = 200;
+        this._targetBatteryLevelDropTime = 240;
+        this._ctr = new PIDController_1.PIDController({
+            k_p: 0.25,
+            k_i: 0.01,
+            k_d: 0.2,
+            i_max: this._maxAdjustment
+        });
+        this._ctr.setTarget(this._targetBatteryLevelDropTime);
+        if (this._device.battery) {
+            this._device.battery.on(this);
+        }
+    }
+    ScoreAdjuster.prototype.onLevelDropTimeChanged = function (measuredLevelDropTime) {
+        var output = this._ctr.update(measuredLevelDropTime);
+        var sign = output < 0 ? -1 : 1;
+        if (Math.abs(output) > this._maxAdjustment) {
+            output = sign * this._maxAdjustment;
+        }
+        this._adjustment = -output / this._maxAdjustment;
+        console.log("Measured battery level drop time: " +
+            measuredLevelDropTime + "(sec) | Adjustment: " + this._adjustment);
+    };
+    Object.defineProperty(ScoreAdjuster.prototype, "adjustment", {
+        get: function () {
+            return this._adjustment;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    return ScoreAdjuster;
+}());
+exports.ScoreAdjuster = ScoreAdjuster;
+new ScoreAdjuster(new Device_1.Device());
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Battery = (function () {
+    function Battery() {
+        var _this = this;
+        this._batteryListeners = [];
+        this._levelDropTimeInSeconds = Infinity;
+        this._avgLevelDropTimeInSeconds = 180;
+        this._initialTimeStamp = Date.now();
+        navigator.getBattery().then(function (battery) {
+            _this.initWithAllInfos(battery);
+            battery.onchargingchange = function () { _this.updateChargeInfo(battery); };
+            battery.onlevelchange = function () { _this.updateLevelInfo(battery); };
+            battery.ondischargingtimechange = function () { _this.updateDischargingInfo(battery); };
+        });
+    }
+    Battery.prototype.initWithAllInfos = function (battery) {
+        this.updateChargeInfo(battery);
+        this.updateLevelInfo(battery);
+        this.updateDischargingInfo(battery);
+    };
+    Battery.prototype.updateDischargingInfo = function (battery) {
+        this._dischargingTimeInSeconds = battery.dischargingTime;
+        console.log("Battery discharging time: " + battery.dischargingTime + " seconds");
+    };
+    Battery.prototype.updateLevelInfo = function (battery) {
+        this._level = battery.level;
+        var actualTimeStamp = Date.now();
+        var dTime = actualTimeStamp - this._initialTimeStamp;
+        this._initialTimeStamp = actualTimeStamp;
+        if (this._levelDropTimeInSeconds === Infinity) {
+            this._levelDropTimeInSeconds = this._avgLevelDropTimeInSeconds;
+        }
+        else {
+            this._levelDropTimeInSeconds = dTime / 1000;
+            this.emitBatteryLevelDropTimeChange(this._levelDropTimeInSeconds);
+        }
+        console.log("One level drain duration: " +
+            this._levelDropTimeInSeconds.toFixed(5) + " seconds");
+        console.log("Battery level: " + battery.level * 100 + " %");
+    };
+    Battery.prototype.updateChargeInfo = function (battery) {
+        this._isCharging = battery.charging;
+        console.log("Battery charging? " + (battery.charging ? "Yes" : "No"));
+    };
+    Object.defineProperty(Battery.prototype, "levelDropTimeInSeconds", {
+        get: function () {
+            return this._levelDropTimeInSeconds;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Battery.prototype, "isCharging", {
+        get: function () {
+            return this._isCharging;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Battery.prototype, "level", {
+        get: function () {
+            return this._level;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Battery.prototype, "chargingTimeInSeconds", {
+        get: function () {
+            return this._chargingTimeInSeconds;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Battery.prototype, "dischargingTimeInSeconds", {
+        get: function () {
+            return this._dischargingTimeInSeconds;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Battery.prototype.emitBatteryLevelDropTimeChange = function (measurement) {
+        if (this._batteryListeners) {
+            this._batteryListeners.slice(0).forEach(function (l) { return l.onLevelDropTimeChanged(measurement); });
+        }
+    };
+    Battery.prototype.on = function (listener) {
+        this._batteryListeners.push(listener);
+    };
+    Battery.prototype.off = function (listener) {
+        this._batteryListeners = this._batteryListeners.filter(function (l) { return l !== listener; });
+    };
+    Battery.prototype.allOff = function () {
+        this._batteryListeners = [];
+    };
+    Battery.prototype.hasListener = function () {
+        return this._batteryListeners.length !== 0;
+    };
+    return Battery;
+}());
+exports.Battery = Battery;
+
+
+/***/ }),
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -239,324 +583,6 @@ var Network = (function () {
     return Network;
 }());
 exports.Network = Network;
-
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var Device_1 = __webpack_require__(0);
-var ScoreAdjuster_1 = __webpack_require__(11);
-var Network_1 = __webpack_require__(2);
-var weights;
-(function (weights) {
-    weights[weights["batteryLevel"] = 0.1] = "batteryLevel";
-    weights[weights["batetryChargingTime"] = 0.2] = "batetryChargingTime";
-    weights[weights["batteryDischargingTime"] = 0.3] = "batteryDischargingTime";
-    weights[weights["connectionType"] = 0.3] = "connectionType";
-    weights[weights["downloadSpeed"] = 0.15] = "downloadSpeed";
-    weights[weights["uploadSpeed"] = 0.15] = "uploadSpeed";
-    weights[weights["adjustment"] = 0.1] = "adjustment";
-})(weights = exports.weights || (exports.weights = {}));
-var DeviceBenchmarker = (function () {
-    function DeviceBenchmarker() {
-        this._device = new Device_1.Device();
-        this._scoreAdjuster = new ScoreAdjuster_1.ScoreAdjuster(this._device);
-    }
-    DeviceBenchmarker.prototype.start = function () {
-        var _this = this;
-        var battery = this._device.battery;
-        var network = this._device.network;
-        setInterval(function () {
-            if (network.type === Network_1.ConnectionType.cellular ||
-                (battery.level < 0.15 && battery.isCharging === false)) {
-                _this._device.actualScore = 0;
-                return;
-            }
-            var score = 0;
-            score += battery.level * weights.batteryLevel;
-            switch (network.type) {
-                case Network_1.ConnectionType.ethernet:
-                    score += weights.connectionType;
-                    break;
-                case Network_1.ConnectionType.wifi:
-                    score += weights.connectionType;
-                    break;
-                default: break;
-            }
-            var dSpeedScore = (network.downlink / network.downlinkLimit);
-            var uSpeedScore = (network.uplink / network.uplinkLimit);
-            dSpeedScore = dSpeedScore < 1 ? dSpeedScore : 1;
-            uSpeedScore = uSpeedScore < 1 ? uSpeedScore : 1;
-            score += dSpeedScore * weights.downloadSpeed;
-            score += uSpeedScore * weights.uploadSpeed;
-            score += _this._scoreAdjuster.adjustment * weights.adjustment;
-            console.log("Device score: " + score);
-        }, 10000);
-    };
-    DeviceBenchmarker.prototype.getascore = function () {
-        return this._device.actualScore;
-    };
-    return DeviceBenchmarker;
-}());
-exports.DeviceBenchmarker = DeviceBenchmarker;
-new DeviceBenchmarker().start();
-
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var Battery = (function () {
-    function Battery() {
-        var _this = this;
-        this._batteryListeners = [];
-        this._levelDropTimeInSeconds = Infinity;
-        this._avgLevelDropTimeInSeconds = 180;
-        this._initialTimeStamp = Date.now();
-        navigator.getBattery().then(function (battery) {
-            _this.initWithAllInfos(battery);
-            battery.onchargingchange = function () { _this.updateChargeInfo(battery); };
-            battery.onlevelchange = function () { _this.updateLevelInfo(battery); };
-            battery.ondischargingtimechange = function () { _this.updateDischargingInfo(battery); };
-        });
-    }
-    Battery.prototype.initWithAllInfos = function (battery) {
-        this.updateChargeInfo(battery);
-        this.updateLevelInfo(battery);
-        this.updateDischargingInfo(battery);
-    };
-    Battery.prototype.updateDischargingInfo = function (battery) {
-        this._dischargingTimeInSeconds = battery.dischargingTime;
-        console.log("Battery discharging time: " + battery.dischargingTime + " seconds");
-    };
-    Battery.prototype.updateLevelInfo = function (battery) {
-        this._level = battery.level;
-        var actualTimeStamp = Date.now();
-        var dTime = actualTimeStamp - this._initialTimeStamp;
-        this._initialTimeStamp = actualTimeStamp;
-        if (this._levelDropTimeInSeconds === Infinity) {
-            this._levelDropTimeInSeconds = this._avgLevelDropTimeInSeconds;
-        }
-        else {
-            this._levelDropTimeInSeconds = dTime / 1000;
-            this.emitBatteryLevelDropTimeChange(this._levelDropTimeInSeconds);
-        }
-        console.log("One level drain duration: " +
-            this._levelDropTimeInSeconds.toFixed(5) + " seconds");
-        console.log("Battery level: " + battery.level * 100 + " %");
-    };
-    Battery.prototype.updateChargeInfo = function (battery) {
-        this._isCharging = battery.charging;
-        console.log("Battery charging? " + (battery.charging ? "Yes" : "No"));
-    };
-    Object.defineProperty(Battery.prototype, "levelDropTimeInSeconds", {
-        get: function () {
-            return this._levelDropTimeInSeconds;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Battery.prototype, "isCharging", {
-        get: function () {
-            return this._isCharging;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Battery.prototype, "level", {
-        get: function () {
-            return this._level;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Battery.prototype, "chargingTimeInSeconds", {
-        get: function () {
-            return this._chargingTimeInSeconds;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Battery.prototype, "dischargingTimeInSeconds", {
-        get: function () {
-            return this._dischargingTimeInSeconds;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Battery.prototype.emitBatteryLevelDropTimeChange = function (measurement) {
-        if (this._batteryListeners) {
-            this._batteryListeners.slice(0).forEach(function (l) { return l.onLevelDropTimeChanged(measurement); });
-        }
-    };
-    Battery.prototype.on = function (listener) {
-        this._batteryListeners.push(listener);
-    };
-    Battery.prototype.off = function (listener) {
-        this._batteryListeners = this._batteryListeners.filter(function (l) { return l !== listener; });
-    };
-    Battery.prototype.allOff = function () {
-        this._batteryListeners = [];
-    };
-    Battery.prototype.hasListener = function () {
-        return this._batteryListeners.length !== 0;
-    };
-    return Battery;
-}());
-exports.Battery = Battery;
-
-
-/***/ }),
-/* 5 */,
-/* 6 */,
-/* 7 */,
-/* 8 */,
-/* 9 */,
-/* 10 */,
-/* 11 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var Device_1 = __webpack_require__(0);
-var ScoreAdjuster = (function () {
-    function ScoreAdjuster(device) {
-        this._adjustment = 0;
-        this._device = device;
-        this._maxAdjustment = 50;
-        this._targetBatteryLevelDropTime = 240;
-        this._batteryLevelDropTimeOffset = 20;
-        var Controller = __webpack_require__(12);
-        this._ctr = new Controller({
-            k_p: 0.25,
-            k_i: 0.01,
-            k_d: 0.0,
-            i_max: this._batteryLevelDropTimeOffset
-        });
-        this._ctr.setTarget(this._targetBatteryLevelDropTime);
-        this._device.battery.on(this);
-    }
-    ScoreAdjuster.prototype.onLevelDropTimeChanged = function (measuredLevelDropTime) {
-        var output = this._ctr.update(measuredLevelDropTime);
-        var sign = output < 0 ? -1 : 1;
-        if (Math.abs(output) > this._maxAdjustment) {
-            output = sign * this._maxAdjustment;
-        }
-        this._adjustment = -output / this._maxAdjustment;
-        console.log("Measured battery level drop time: " +
-            measuredLevelDropTime + "(sec) | Adjustment: " + this._adjustment);
-    };
-    Object.defineProperty(ScoreAdjuster.prototype, "adjustment", {
-        get: function () {
-            return this._adjustment;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    return ScoreAdjuster;
-}());
-exports.ScoreAdjuster = ScoreAdjuster;
-new ScoreAdjuster(new Device_1.Device());
-
-
-/***/ }),
-/* 12 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(13);
-
-/***/ }),
-/* 13 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-/**
- *  PID Controller.
- */
-class Controller {
-  constructor(k_p, k_i, k_d, dt) {
-    let i_max;
-    if (typeof k_p === 'object') {
-      let options = k_p;
-      k_p = options.k_p;
-      k_i = options.k_i;
-      k_d = options.k_d;
-      dt = options.dt;
-      i_max = options.i_max;
-    }
-
-    // PID constants
-    this.k_p = (typeof k_p === 'number') ? k_p : 1;
-    this.k_i = k_i || 0;
-    this.k_d = k_d || 0;
-
-    // Interval of time between two updates
-    // If not set, it will be automatically calculated
-    this.dt = dt || 0;
-
-    // Maximum absolute value of sumError
-    this.i_max = i_max || 0;
-
-    this.sumError  = 0;
-    this.lastError = 0;
-    this.lastTime  = 0;
-
-    this.target    = 0; // default value, can be modified with .setTarget
-  }
-
-  setTarget(target) {
-    this.target = target;
-  }
-
-  update(currentValue) {
-    this.currentValue = currentValue;
-
-    // Calculate dt
-    let dt = this.dt;
-    if (!dt) {
-      let currentTime = Date.now();
-      if (this.lastTime === 0) { // First time update() is called
-        dt = 0;
-      } else {
-        dt = (currentTime - this.lastTime) / 1000; // in seconds
-      }
-      this.lastTime = currentTime;
-    }
-    if (typeof dt !== 'number' || dt === 0) {
-      dt = 1;
-    }
-
-    let error = (this.target - this.currentValue);
-    this.sumError = this.sumError + error*dt;
-    if (this.i_max > 0 && Math.abs(this.sumError) > this.i_max) {
-      let sumSign = (this.sumError > 0) ? 1 : -1;
-      this.sumError = sumSign * this.i_max;
-    }
-
-    let dError = (error - this.lastError)/dt;
-    this.lastError = error;
-
-    return (this.k_p*error) + (this.k_i * this.sumError) + (this.k_d * dError);
-  }
-
-  reset() {
-    this.sumError  = 0;
-    this.lastError = 0;
-    this.lastTime  = 0;
-  }
-}
-
-module.exports = Controller;
 
 
 /***/ })

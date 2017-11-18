@@ -18,7 +18,7 @@ export enum weights{
     adjustment = 0.1
 }
 
-export class DeviceBenchmarker {
+export class ScoreComputer {
     private _device : Device;
     private _scoreAdjuster : ScoreAdjuster;
 
@@ -69,4 +69,4 @@ export class DeviceBenchmarker {
     }
 }
 
-new DeviceBenchmarker().start();
+new ScoreComputer().start();

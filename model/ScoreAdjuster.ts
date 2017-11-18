@@ -4,6 +4,7 @@
 
 import {Device} from "./Device";
 import {IBatteryListener} from "./Battery";
+import {PIDController} from "./PIDController";
 declare function require(name:string) : any;
 
 export class ScoreAdjuster implements IBatteryListener{
@@ -12,26 +13,26 @@ export class ScoreAdjuster implements IBatteryListener{
     private _adjustment: number;
     private _maxAdjustment: number;
     private _batteryLevelDropTimeOffset: number;
-    private _ctr: {setTarget(targetValue: number):void, update(corr: number): number};
+    public _ctr: PIDController;
 
     constructor(device: Device){
         this._adjustment = 0;
         this._device = device;
-        this._maxAdjustment = 50;
+        this._maxAdjustment = 200;
         this._targetBatteryLevelDropTime = 240; // 1 level drop in 4 minutes
-        this._batteryLevelDropTimeOffset = 20; // 20 sec difference is OK
-
-        let Controller = require('node-pid-controller');
         
-        this._ctr = new Controller({
+        this._ctr = new PIDController({
           k_p: 0.25,
           k_i: 0.01,
-          k_d: 0.0,
-          i_max: this._batteryLevelDropTimeOffset
+          k_d: 0.2,
+          i_max: this._maxAdjustment
         });
     
         this._ctr.setTarget(this._targetBatteryLevelDropTime);
-        this._device.battery.on(this);
+        
+        if(this._device.battery) {
+            this._device.battery.on(this);
+        }
     }
 
     onLevelDropTimeChanged(measuredLevelDropTime: number): void {

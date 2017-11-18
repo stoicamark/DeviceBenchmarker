@@ -1,8 +1,6 @@
-import {DeviceBenchmarker, weights} from './DeviceBenchmarker';
-declare function require(name:string) : any;
-let temporal = require("temporal");
+import {ScoreComputer} from './ScoreComputer';
 
 (()=>{
-    let benchmarker = new DeviceBenchmarker();
-    benchmarker.start();
+    let scoreComputer = new ScoreComputer();
+    scoreComputer.start();
 })();
