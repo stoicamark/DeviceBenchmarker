@@ -2,16 +2,11 @@ import {ScoreAdjuster} from "../model/ScoreAdjuster"
 import {Device} from "../model/Device"
 import {Battery} from "../model/Battery"
 import {PIDController, Options} from "../model/PIDController"
+import {Event} from "../model/Event"
+import {mock, instance, when} from "../node_modules/ts-mockito"
 
 declare let Plotly : any
 declare function require(name:string) : any
-
-let device: Device
-let scoreAdjuster: ScoreAdjuster
-let pidController: PIDController
-let x: number[]
-let adjusterY: number[]
-let oldtY: number[]
 
 interface ITest{
     title: String
@@ -19,8 +14,17 @@ interface ITest{
     batteryDrainFunction: (x: number) => number
 }
 
-class ScoreAdjusterTester{
+export class ScoreAdjusterTester{
+
+    private device: Device
+    private scoreAdjuster: ScoreAdjuster
+    private pidController: PIDController
+    private x: number[]
+    private adjusterY: number[]
+    private oldtY: number[]
+
     constructor(){
+        console.log("helloo")
         this.setup()
        
         this.drawTest({
@@ -71,23 +75,23 @@ class ScoreAdjusterTester{
     
         for(let i = 0; i < 20; ++i){
             let oldtValue = testInfo.batteryDrainFunction(i)
-            scoreAdjuster._ctr.setSampling(testInfo.batteryDrainFunction(i));
-            scoreAdjuster.onLevelDropTimeChanged(oldtValue)
-            x.push(i)
-            adjusterY.push(scoreAdjuster.adjustment)
-            oldtY.push(oldtValue)
+            this.scoreAdjuster._ctr.setSampling(oldtValue);
+            this.scoreAdjuster.dataAvailable(oldtValue)
+            this.x.push(i)
+            this.adjusterY.push(this.scoreAdjuster.adjustment)
+            this.oldtY.push(oldtValue)
         }
     
         let adjusterTrace = {
-            x: x,
-            y: adjusterY,
+            x: this.x,
+            y: this.adjusterY,
             name: 'adjuster trace',
             type: 'scatter'
         }
         
         let oldtTrace = {
-            x: x,
-            y: oldtY,
+            x: this.x,
+            y: this.oldtY,
             xaxis: 'x2',
             yaxis: 'y2',
             name: 'OLDT trace',
@@ -128,25 +132,28 @@ class ScoreAdjusterTester{
     }
 
     private beforeEach(){
-        x = []
-        adjusterY = []
-        oldtY = []
-        scoreAdjuster._ctr.reset()
+        this.x = []
+        this.adjusterY = []
+        this.oldtY = []
+        this.scoreAdjuster._ctr.reset()
     }
 
     private setup(){
-        device = new Device()
-        device.battery = null
-        scoreAdjuster = new ScoreAdjuster(device)
-        scoreAdjuster._ctr = new PIDController({
-            k_p : 0.5,
-            k_i : 0.4,
-            k_d : 0.2,
-            i_max : 200
+        this.device = new Device()
+        let mockedBattery = mock(Battery)
+        let mockedEvent = mock(Event)
+
+        when(mockedBattery.OLDTChanged).thenReturn(instance(mockedEvent))
+        this.device.battery = instance(mockedBattery)
+        this.scoreAdjuster = new ScoreAdjuster(this.device)
+
+        this.scoreAdjuster._ctr = new PIDController({
+            k_p : 0.4,
+            k_i : 0.3,
+            k_d : 0.1,
+            i_max : 300
         })
         let targetOneLevelDropTime = 240 // one level drain in 4 minutes
-        scoreAdjuster._ctr.setTarget(targetOneLevelDropTime)
+        this.scoreAdjuster._ctr.setTarget(targetOneLevelDropTime)
     }
 }
-
-new ScoreAdjusterTester()

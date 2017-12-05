@@ -1,7 +1,7 @@
 var path = require('path');
 
  module.exports = {
-   entry: './test/ScoreAdjuster.test.ts',
+   entry: './test/Main.test.ts',
    resolve: {
      extensions: ['.webpack.js', '.web.js', '.ts', '.js']
    },

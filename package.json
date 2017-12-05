@@ -1,6 +1,6 @@
 {
   "name": "devicebenchmarker",
-  "version": "1.0.0",
+  "version": "1.0.10",
   "description": "This is a lightweight TypeScript library, which can be used for your device's resource management. The library provides a score to your device, depending on your device's hardware configuration.",
   "main": "DeviceBenchmarker.js",
   "scripts": {
@@ -9,13 +9,14 @@
   "author": "Stoica Mark",
   "license": "ISC",
   "dependencies": {
-    "node-pid-controller": "^1.0.0"
+    "console.table": "^0.9.1"
   },
   "repository": "https://github.com/stoicamark/DeviceBenchmarker",
   "bugs": {
     "url": "https://github.com/stoicamark/DeviceBenchmarker/issues"
   },
   "devDependencies": {
+    "ts-mockito": "^2.2.7",
     "webpack": "^3.7.1"
   }
 }
