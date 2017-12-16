@@ -1,25 +1,25 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Device_1 = require("./Device");
 var ScoreAdjuster_1 = require("./ScoreAdjuster");
 var Network_1 = require("./Network");
 var Event_1 = require("./Event");
+var Battery_1 = require("./Battery");
 require('console.table');
 var weights;
 (function (weights) {
-    weights[weights["batteryLevel"] = 0.2] = "batteryLevel";
-    weights[weights["batteryChargingTime"] = 0.2] = "batteryChargingTime";
-    weights[weights["batteryDischargingTime"] = 0.2] = "batteryDischargingTime";
+    weights[weights["batteryLevel"] = 0.3] = "batteryLevel";
+    weights[weights["batteryDischargingTime"] = 0.3] = "batteryDischargingTime";
     weights[weights["downloadSpeed"] = 0.15] = "downloadSpeed";
     weights[weights["uploadSpeed"] = 0.15] = "uploadSpeed";
-    weights[weights["adjustment"] = 0.3] = "adjustment";
+    weights[weights["adjustment"] = 0.1] = "adjustment";
 })(weights = exports.weights || (exports.weights = {}));
 var ScoreComputer = (function () {
-    function ScoreComputer(device) {
+    function ScoreComputer(battery, network) {
         this.ScoreComputed = new Event_1.Event();
-        this._device = device === undefined ? new Device_1.Device() : device;
-        this._device.battery.ChargingChanged.on(this);
-        this._scoreAdjuster = new ScoreAdjuster_1.ScoreAdjuster(this._device);
+        this._battery = battery === undefined ? new Battery_1.Battery() : battery;
+        this._network = network === undefined ? new Network_1.Network() : network;
+        this._battery.ChargingChanged.on(this);
+        this._scoreAdjuster = new ScoreAdjuster_1.ScoreAdjuster(this._battery);
         this._actualScore = 1;
         this._downlinkLimit = 2.5;
         this._uplinkLimit = 1;
@@ -29,17 +29,27 @@ var ScoreComputer = (function () {
         var _this = this;
         setInterval(function () {
             _this.compute();
-        }, 60000);
+        }, 10000);
     };
     ScoreComputer.prototype.dataAvailable = function (batteryChargingInfo) {
         this.compute();
     };
-    ScoreComputer.prototype.subscribe = function (subscriber) {
-        this.ScoreComputed.on(subscriber);
+    ScoreComputer.prototype.subscribe = function (client) {
+        if (this._network.Client === undefined) {
+            this._network.Client = client;
+        }
+        if (this._battery.Client === undefined) {
+            this._battery.Client = client;
+        }
+        this.ScoreComputed.on(client);
+    };
+    ScoreComputer.prototype.unsubscribe = function (client) {
+        this._network.Client = undefined;
+        this.ScoreComputed.off(client);
     };
     ScoreComputer.prototype.compute = function () {
-        var battery = this._device.battery;
-        var network = this._device.network;
+        var battery = this.Battery;
+        var network = this.Network;
         if (network.type === Network_1.ConnectionType.cellular ||
             (battery.level < 0.15 && !battery.isCharging)) {
             this._actualScore = 0;
@@ -125,7 +135,23 @@ var ScoreComputer = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(ScoreComputer.prototype, "Battery", {
+        get: function () {
+            if (this.ScoreComputed.hasListener) {
+                this._battery.maintainBatteryInfos(10);
+            }
+            return this._battery;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ScoreComputer.prototype, "Network", {
+        get: function () {
+            return this._network;
+        },
+        enumerable: true,
+        configurable: true
+    });
     return ScoreComputer;
 }());
 exports.ScoreComputer = ScoreComputer;
-new ScoreComputer().start();

@@ -1,72 +1,87 @@
 /**
  * Created by Habanero on 2017. 10. 05..
  */
-
-import {Device} from "./Device"
 import {ScoreAdjuster} from "./ScoreAdjuster"
-import {ConnectionType} from "./Network"
+import {ConnectionType, Network} from "./Network"
 import {Event, Subscriber} from "./Event"
+import { Battery } from "./Battery";
 
 declare function require(name:string) : any
 require('console.table')
 
 export enum weights{
-    batteryLevel = 0.2,
-    batteryChargingTime = 0.2,
-    batteryDischargingTime = 0.2,
+    batteryLevel = 0.3,
+    batteryDischargingTime = 0.3,
     downloadSpeed = 0.15,
     uploadSpeed = 0.15,
-    adjustment = 0.3
+    adjustment = 0.10
+}
+
+export interface BenchmarkerClient extends Subscriber<number>{
+    getDownloadSpeed():number
+    getUploadSpeed():number
+    getBandwidth():number
+    getPeerId():String
 }
 
 export class ScoreComputer implements Subscriber<boolean>{
     
-    private _device : Device
+    private _network : Network
+    private _battery : Battery
     private _actualScore : number
     public _scoreAdjuster : ScoreAdjuster
 
-    public readonly _uplinkLimit : number
-    public readonly _downlinkLimit : number
-    public readonly _dischargingTimeLimit: number
+    _uplinkLimit : number
+    _downlinkLimit : number
+    _dischargingTimeLimit: number
 
     public ScoreComputed: Event<number> = new Event()
 
-    constructor(device?: Device){
+    constructor(battery?: Battery, network?: Network){
 
-        this._device = device === undefined ? new Device() : device
+        this._battery = battery === undefined ? new Battery() : battery
+        this._network = network === undefined ? new Network() : network
         
-        this._device.battery.ChargingChanged.on(this)
+        this._battery.ChargingChanged.on(this)
 
-        this._scoreAdjuster = new ScoreAdjuster(this._device)
+        this._scoreAdjuster = new ScoreAdjuster(this._battery)
 
         this._actualScore = 1
 
         this._downlinkLimit = 2.5 // maximum score coefficient if the downlink reaches >= 25 Mbps
         this._uplinkLimit = 1 // maximum score coefficient if the uplink reaches >= 10 Mbps
-
         this._dischargingTimeLimit = 7200 // maximum score coefficient if the discharging time >= two hour
     }
-
-    
 
     public start(){
         setInterval(()=>{
             this.compute()
-        }, 60000)
+        }, 10000)
     }
 
     dataAvailable(batteryChargingInfo: boolean): void {
         this.compute()
     }
 
-    public subscribe( subscriber: Subscriber<number>) : void{
-        this.ScoreComputed.on(subscriber)
+    public subscribe( client: BenchmarkerClient) : void{
+        if(this._network.Client === undefined){
+            this._network.Client = client
+        }
+        if(this._battery.Client === undefined){
+            this._battery.Client = client
+        }
+        this.ScoreComputed.on(client)
+    }
+
+    public unsubscribe(client: BenchmarkerClient): void{
+        this._network.Client = undefined
+        this.ScoreComputed.off(client)
     }
 
     public compute(): void{
-        
-        let battery = this._device.battery
-        let network = this._device.network
+
+        let battery = this.Battery
+        let network = this.Network
                     
         if(network.type === ConnectionType.cellular || 
           (battery.level < 0.15 && !battery.isCharging)){
@@ -169,6 +184,15 @@ export class ScoreComputer implements Subscriber<boolean>{
     public get ActualScore() : number{
         return this._actualScore
     }
-}
 
-new ScoreComputer().start()
+    public get Battery() : Battery{
+        if(this.ScoreComputed.hasListener){
+            this._battery.maintainBatteryInfos(10)
+        }
+        return this._battery
+    }
+
+    public get Network(): Network{
+        return this._network
+    }
+}

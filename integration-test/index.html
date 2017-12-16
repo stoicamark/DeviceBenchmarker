@@ -7,8 +7,16 @@
     <h1>Adaptive cache test</h1>
 
     <body>
-        <input type="file" id="files" name="file" /> 
-        <button id="readFile">Read selected file</button>
+        <input type="file" id="files" name="file" onchange="readBlob()"/> <br>
+        
+        <form>
+            <input type="checkbox" id="filter">
+            <input type="number" id="peerNum" min="1" max="25" value="3">
+            <label for="filter">Plot top online peers</label>
+            <label for="peerNum">(between 1 and 25)</label>
+          </form>
+        
+
         <div id="text_content"></div>
 
         <div id="integration-test"></div>
@@ -22,51 +30,98 @@
     </script>
     
     <script>
+        let filterCheckBox = document.getElementById('filter')
+        let peerNumInput = document.getElementById('peerNum')
+
         function readBlob() {
     
-        var files = document.getElementById('files').files;
-        if (!files.length) {
-            alert('Please select a file!');
-            return;
-        }
-    
-        var file = files[0];
-    
-        var reader = new FileReader();
-    
-        // If we use onloadend, we need to check the readyState.
-        reader.onloadend = function(evt) {
-            if (evt.target.readyState == FileReader.DONE) { // DONE == 2
-                let textContent = evt.target.result;
-                console.log(textContent)
-                plotTest(textContent)
+            var files = document.getElementById('files').files;
+            if (!files.length) {
+                alert('Please select a file!');
+                return;
             }
-        };
-        var blob = file.slice(0, file.size - 1);
-        reader.readAsText(blob);
+        
+            var file = files[0];
+        
+            var reader = new FileReader();
+        
+            // If we use onloadend, we need to check the readyState.
+            reader.onloadend = function(evt) {
+                if (evt.target.readyState == FileReader.DONE) { // DONE == 2
+                    let textContent = evt.target.result;
+                    let sortedPeers = parseData(textContent)
+                    
+                    if(filterCheckBox.checked){
+                        let peerNum = parseInt(peerNumInput.value)
+                        let peerArray = sortedPeers.slice(0, peerNum)
+                        filterPeerRecords(peerArray)
+                        plot(peerArray)
+                    }else{
+                        filterPeerRecords(peerArray)
+                        plot(sortedPeers)
+                    }
+                }
+            };
+
+            var blob = file.slice(0, file.size);
+            reader.readAsText(blob);
         }
-        document.getElementById('readFile').addEventListener('click', readBlob, false);
-    
-        function plotTest(textContent){
-            let obj = JSON.parse(textContent)
+
+        let obj = "";
+        let dict = {};
+        let recordCounts = {};
+
+        function parseData(textContent){
+            this.obj = JSON.parse(textContent)
 
             var peerKey = function(peerRecord){
                 return peerRecord.id;
             }
 
-            let dict = {};
-
-            obj.forEach(record => {
+            this.obj.forEach(record => {
                 if(dict[peerKey(record)] === undefined){
                     dict[peerKey(record)] = []
                 }
                 dict[peerKey(record)].push(record)
             })
 
-            let traces = [];
-
             for(var key in dict){
                 let peer = dict[key]
+                recordCounts[key] = peer.length
+            }
+
+            let sortedPeers = Object.keys(dict)
+                .sort(
+                    function(a, b){
+                        return dict[b].length - dict[a].length
+                    }
+                )
+                .map(
+                    function(k){
+                        return dict[k]
+                    }
+                );
+            
+            return sortedPeers
+        }
+
+        function filterPeerRecords(peers){
+            for(let i=0; i<peers.length; ++i){
+                let prevBatteryLevel = 1
+                peers[i] = peers[i].filter(record => {
+                    let isSmaller = record.batteryLevel <= prevBatteryLevel
+                    if(isSmaller){
+                        prevBatteryLevel = record.batteryLevel
+                    }
+                    return isSmaller
+                })
+            }
+        }
+        
+        function plot(peers){
+            let traces = [];
+
+            peers.forEach(peer=>{
                 let x = []
                 let y = []
 
@@ -82,7 +137,8 @@
                     type: 'scatter'
                 }
                 traces.push(trace)
-            }
+            })
+ 
             console.log(traces)
             
             let layout = {

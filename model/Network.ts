@@ -1,3 +1,5 @@
+import { BenchmarkerClient } from "./ScoreComputer";
+
 /**
  * Created by Habanero on 2017. 10. 06..
  */
@@ -14,8 +16,7 @@ interface NetworkInfo{
     downlink: number,
     type?: String,
     effectiveType: String,
-    rtt: number,
-    onchange: any
+    rtt: number
 }
 
 export class Network{
@@ -24,27 +25,26 @@ export class Network{
     private _downlink : number
     private _uplink : number
     private _roundTripTime : number
+    private _client: BenchmarkerClient
 
-    constructor() {
-        let networkInfo : NetworkInfo = navigator.connection
-
+    constructor(client?: BenchmarkerClient) {
         this._type = ConnectionType.wifi
+        this.Client = client
+        this.maintainNetworkInfos()
+    }
 
-        // if the NetworkInformation API is not provided
-        // measure download speed manually in every 5 minutes
-        if(networkInfo === undefined){ 
+    private maintainNetworkInfos(){
+        if(!this.Client){
+            let networkInfo : NetworkInfo = navigator.connection
             setInterval(()=>{
-                this.measureDownloadSpeed()
-            }, 300000)
-        }else{
-            this.updateNetworkInfos(networkInfo)
-            networkInfo.onchange += this.updateNetworkInfos(networkInfo)
+                if(networkInfo === undefined){
+                    this.measureDownloadSpeed()
+                    this.measureUploadSpeed()
+                }else{
+                    this.updateNetworkInfos(networkInfo) 
+                }
+            }, 10000)
         }
-        
-        // measure upload speed manually in every 5 minutes
-        setInterval(()=>{
-            this.measureUploadSpeed()
-        }, 300000)
     }
 
     private updateNetworkInfos(networkInfo: NetworkInfo){
@@ -86,11 +86,21 @@ export class Network{
     }
 
     get downlink(): number {
-        return this._downlink
+        if(!this.Client){
+            return this._downlink
+        }
+        else{
+            return this.Client.getBandwidth()
+        }
     }
 
     get uplink(): number {
-        return this._uplink
+        if(!this.Client){
+            return this._uplink
+        }
+        else{
+            return this.Client.getBandwidth()
+        }
     }
 
     set type(value: ConnectionType) {
@@ -103,5 +113,13 @@ export class Network{
 
     set uplink(value: number) {
         this._uplink = value
+    }
+
+    get Client(): BenchmarkerClient{
+        return this._client
+    }
+
+    set Client(value: BenchmarkerClient){
+        this._client = value
     }
 }

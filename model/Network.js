@@ -7,23 +7,26 @@ var ConnectionType;
     ConnectionType["ethernet"] = "ethernet";
 })(ConnectionType = exports.ConnectionType || (exports.ConnectionType = {}));
 var Network = (function () {
-    function Network() {
-        var _this = this;
-        var networkInfo = navigator.connection;
+    function Network(client) {
         this._type = ConnectionType.wifi;
-        if (networkInfo === undefined) {
-            setInterval(function () {
-                _this.measureDownloadSpeed();
-            }, 300000);
-        }
-        else {
-            this.updateNetworkInfos(networkInfo);
-            networkInfo.onchange += this.updateNetworkInfos(networkInfo);
-        }
-        setInterval(function () {
-            _this.measureUploadSpeed();
-        }, 300000);
+        this.Client = client;
+        this.maintainNetworkInfos();
     }
+    Network.prototype.maintainNetworkInfos = function () {
+        var _this = this;
+        if (!this.Client) {
+            var networkInfo_1 = navigator.connection;
+            setInterval(function () {
+                if (networkInfo_1 === undefined) {
+                    _this.measureDownloadSpeed();
+                    _this.measureUploadSpeed();
+                }
+                else {
+                    _this.updateNetworkInfos(networkInfo_1);
+                }
+            }, 10000);
+        }
+    };
     Network.prototype.updateNetworkInfos = function (networkInfo) {
         if (networkInfo.type !== undefined) {
             this._type = networkInfo.type;
@@ -65,7 +68,12 @@ var Network = (function () {
     });
     Object.defineProperty(Network.prototype, "downlink", {
         get: function () {
-            return this._downlink;
+            if (!this.Client) {
+                return this._downlink;
+            }
+            else {
+                return this.Client.getBandwidth();
+            }
         },
         set: function (value) {
             this._downlink = value;
@@ -75,10 +83,25 @@ var Network = (function () {
     });
     Object.defineProperty(Network.prototype, "uplink", {
         get: function () {
-            return this._uplink;
+            if (!this.Client) {
+                return this._uplink;
+            }
+            else {
+                return this.Client.getBandwidth();
+            }
         },
         set: function (value) {
             this._uplink = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Network.prototype, "Client", {
+        get: function () {
+            return this._client;
+        },
+        set: function (value) {
+            this._client = value;
         },
         enumerable: true,
         configurable: true
