@@ -1,4 +1,3 @@
-import {Device} from "../model/Device"
 import {Battery} from "../model/Battery"
 import {ScoreAdjuster} from "../model/ScoreAdjuster"
 import {ScoreComputer} from "../model/ScoreComputer"
@@ -28,7 +27,6 @@ export class ScoreComputerTester{
     private network: Network
     private scoreComputer: ScoreComputer
 
-    private mockedDevice: Device
     private mockedBattery: Battery
     private mockedNetwork: Network
     
@@ -200,18 +198,15 @@ export class ScoreComputerTester{
     }
 
     private setup(): void{
-        this.mockedDevice = mock(Device)
         this.mockedBattery = mock(Battery)
         this.mockedNetwork = mock(Network)
 
         let mockedEvent = mock(Event)
-
         when(this.mockedBattery.OLDTChanged).thenReturn(instance(mockedEvent))
-    
-        when(this.mockedDevice.battery).thenReturn(instance(this.mockedBattery))
-        when(this.mockedDevice.network).thenReturn(instance(this.mockedNetwork))
-
-        this.scoreComputer = new ScoreComputer(instance(this.mockedDevice))
+        when(this.mockedBattery.ChargingChanged).thenReturn(instance(mockedEvent))
+        
+        this.scoreComputer = new ScoreComputer(instance(this.mockedBattery), instance(this.mockedNetwork))
+        
         this.scoreComputer._scoreAdjuster._ctr = new PIDController({
             k_p : 0.5,
             k_i : 0.5,

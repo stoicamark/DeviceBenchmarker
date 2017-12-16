@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 14);
+/******/ 	return __webpack_require__(__webpack_require__.s = 15);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -17156,9 +17156,9 @@ exports.Matcher = Matcher;
 
     // Define as an anonymous module so, through path mapping, it can be
     // referenced as the "underscore" module.
-    !(__WEBPACK_AMD_DEFINE_RESULT__ = function() {
+    !(__WEBPACK_AMD_DEFINE_RESULT__ = (function() {
       return _;
-    }.call(exports, __webpack_require__, exports, module),
+    }).call(exports, __webpack_require__, exports, module),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
   }
   // Check for `exports` after `define` in case a build optimizer adds it.
@@ -17174,49 +17174,10 @@ exports.Matcher = Matcher;
   }
 }.call(this));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10), __webpack_require__(30)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10), __webpack_require__(28)(module)))
 
 /***/ }),
 /* 2 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var Battery_1 = __webpack_require__(8);
-var Network_1 = __webpack_require__(4);
-var Device = (function () {
-    function Device() {
-        this._battery = new Battery_1.Battery();
-        this._network = new Network_1.Network();
-    }
-    Object.defineProperty(Device.prototype, "network", {
-        get: function () {
-            return this._network;
-        },
-        set: function (value) {
-            this._network = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Device.prototype, "battery", {
-        get: function () {
-            return this._battery;
-        },
-        set: function (value) {
-            this._battery = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    return Device;
-}());
-exports.Device = Device;
-
-
-/***/ }),
-/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17256,122 +17217,27 @@ exports.Event = Event;
 
 
 /***/ }),
-/* 4 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var ConnectionType;
-(function (ConnectionType) {
-    ConnectionType["wifi"] = "wifi";
-    ConnectionType["cellular"] = "cellular";
-    ConnectionType["ethernet"] = "ethernet";
-})(ConnectionType = exports.ConnectionType || (exports.ConnectionType = {}));
-var Network = (function () {
-    function Network() {
-        var _this = this;
-        var networkInfo = navigator.connection;
-        this._type = ConnectionType.wifi;
-        if (networkInfo === undefined) {
-            setInterval(function () {
-                _this.measureDownloadSpeed();
-            }, 300000);
-        }
-        else {
-            this.updateNetworkInfos(networkInfo);
-            networkInfo.onchange += this.updateNetworkInfos(networkInfo);
-        }
-        setInterval(function () {
-            _this.measureUploadSpeed();
-        }, 300000);
-    }
-    Network.prototype.updateNetworkInfos = function (networkInfo) {
-        if (networkInfo.type !== undefined) {
-            this._type = networkInfo.type;
-        }
-        this._downlink = networkInfo.downlink;
-        this._effectiveType = networkInfo.effectiveType;
-        this._roundTripTime = networkInfo.rtt;
-    };
-    Network.prototype.measureUploadSpeed = function () {
-        this._uplink = 1;
-    };
-    Network.prototype.measureDownloadSpeed = function () {
-        var _this = this;
-        var imageAddr = "https://upload.wikimedia.org/wikipedia/commons/2/2d/Snake_River_%285mb%29.jpg";
-        var downloadSize = 5245329;
-        var download = new Image();
-        var startTime, endTime, duration;
-        var bitsLoaded = downloadSize * 8;
-        startTime = (new Date()).getTime();
-        var cacheBuster = "?nnn=" + startTime;
-        download.src = imageAddr + cacheBuster;
-        download.onload = function () {
-            endTime = (new Date()).getTime();
-            duration = (endTime - startTime) / 1000;
-            var speedbps = Number((bitsLoaded / duration).toFixed(2));
-            var speedkbps = Number((speedbps / 1024).toFixed(2));
-            _this._downlink = Number((speedkbps / 1024).toFixed(2));
-        };
-    };
-    Object.defineProperty(Network.prototype, "type", {
-        get: function () {
-            return this._type;
-        },
-        set: function (value) {
-            this._type = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Network.prototype, "downlink", {
-        get: function () {
-            return this._downlink;
-        },
-        set: function (value) {
-            this._downlink = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Network.prototype, "uplink", {
-        get: function () {
-            return this._uplink;
-        },
-        set: function (value) {
-            this._uplink = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    return Network;
-}());
-exports.Network = Network;
-
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var ArgCaptor_1 = __webpack_require__(28);
-var AnyFunctionMatcher_1 = __webpack_require__(29);
-var AnyNumberMatcher_1 = __webpack_require__(31);
-var AnyOfClassMatcher_1 = __webpack_require__(32);
-var AnyStringMatcher_1 = __webpack_require__(33);
-var AnythingMatcher_1 = __webpack_require__(34);
-var BetweenMatcher_1 = __webpack_require__(35);
-var DeepEqualMatcher_1 = __webpack_require__(36);
-var NotNullMatcher_1 = __webpack_require__(37);
-var StrictEqualMatcher_1 = __webpack_require__(38);
-var MethodStubSetter_1 = __webpack_require__(39);
-var MethodStubVerificator_1 = __webpack_require__(42);
+var ArgCaptor_1 = __webpack_require__(26);
+var AnyFunctionMatcher_1 = __webpack_require__(27);
+var AnyNumberMatcher_1 = __webpack_require__(29);
+var AnyOfClassMatcher_1 = __webpack_require__(30);
+var AnyStringMatcher_1 = __webpack_require__(31);
+var AnythingMatcher_1 = __webpack_require__(32);
+var BetweenMatcher_1 = __webpack_require__(33);
+var DeepEqualMatcher_1 = __webpack_require__(34);
+var NotNullMatcher_1 = __webpack_require__(35);
+var StrictEqualMatcher_1 = __webpack_require__(36);
+var MethodStubSetter_1 = __webpack_require__(37);
+var MethodStubVerificator_1 = __webpack_require__(40);
 var MethodToStub_1 = __webpack_require__(12);
 var Mock_1 = __webpack_require__(13);
-var Spy_1 = __webpack_require__(49);
+var Spy_1 = __webpack_require__(47);
 function spy(instanceToSpy) {
     return new Spy_1.Spy(instanceToSpy).getMock();
 }
@@ -17452,141 +17318,12 @@ function strictEqual(expectedValue) {
     return new StrictEqualMatcher_1.StrictEqualMatcher(expectedValue);
 }
 exports.strictEqual = strictEqual;
-var mockito = __webpack_require__(5);
+var mockito = __webpack_require__(3);
 exports.default = mockito;
 //# sourceMappingURL=ts-mockito.js.map
 
 /***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var ArgsToMatchersValidator = (function () {
-    function ArgsToMatchersValidator() {
-    }
-    ArgsToMatchersValidator.prototype.validate = function (matchers, args) {
-        if (matchers.length !== args.length) {
-            return false;
-        }
-        return matchers.every(function (matcher, index) { return matcher.match(args[index]); });
-    };
-    return ArgsToMatchersValidator;
-}());
-exports.ArgsToMatchersValidator = ArgsToMatchersValidator;
-//# sourceMappingURL=ArgsToMatchersValidator.js.map
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var AbstractMethodStub = (function () {
-    function AbstractMethodStub() {
-    }
-    AbstractMethodStub.prototype.getGroupIndex = function () {
-        return this.groupIndex;
-    };
-    return AbstractMethodStub;
-}());
-exports.AbstractMethodStub = AbstractMethodStub;
-//# sourceMappingURL=AbstractMethodStub.js.map
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var Event_1 = __webpack_require__(3);
-var Battery = (function () {
-    function Battery() {
-        var _this = this;
-        this.OLDTChanged = new Event_1.Event();
-        this._level = 1;
-        this._avgLevelDropTimeInSeconds = 180;
-        this._initialTimeStamp = Date.now();
-        navigator.getBattery().then(function (battery) {
-            _this.initWithAllInfos(battery);
-            battery.onchargingchange = function () { _this.updateChargeInfo(battery); };
-            battery.onlevelchange = function () { _this.updateLevelInfo(battery); };
-            battery.ondischargingtimechange = function () { _this.updateDischargingInfo(battery); };
-        });
-    }
-    Battery.prototype.initWithAllInfos = function (battery) {
-        this.updateChargeInfo(battery);
-        this.updateLevelInfo(battery);
-        this.updateDischargingInfo(battery);
-    };
-    Battery.prototype.updateDischargingInfo = function (battery) {
-        this._dischargingTimeInSeconds = battery.dischargingTime;
-        console.log("Battery discharging time: " + battery.dischargingTime + " seconds");
-    };
-    Battery.prototype.updateLevelInfo = function (battery) {
-        this._level = battery.level;
-        var actualTimeStamp = Date.now();
-        var dTime = actualTimeStamp - this._initialTimeStamp;
-        this._initialTimeStamp = actualTimeStamp;
-        if (this._levelDropTimeInSeconds === undefined) {
-            this._levelDropTimeInSeconds = this._avgLevelDropTimeInSeconds;
-        }
-        else {
-            this._levelDropTimeInSeconds = dTime / 1000;
-            this._levelDropTimeInSeconds = this._isCharging ? Infinity : this._levelDropTimeInSeconds;
-            this.OLDTChanged.trigger(this._levelDropTimeInSeconds);
-        }
-        console.log("Battery level: " + battery.level * 100 + " %");
-    };
-    Battery.prototype.updateChargeInfo = function (battery) {
-        this._isCharging = battery.charging;
-        console.log("Battery charging? " + (battery.charging ? "Yes" : "No"));
-    };
-    Object.defineProperty(Battery.prototype, "levelDropTimeInSeconds", {
-        get: function () {
-            return this._levelDropTimeInSeconds;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Battery.prototype, "isCharging", {
-        get: function () {
-            return this._isCharging;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Battery.prototype, "level", {
-        get: function () {
-            return this._level;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Battery.prototype, "chargingTimeInSeconds", {
-        get: function () {
-            return this._chargingTimeInSeconds;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Battery.prototype, "dischargingTimeInSeconds", {
-        get: function () {
-            return this._dischargingTimeInSeconds;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    return Battery;
-}());
-exports.Battery = Battery;
-
-
-/***/ }),
-/* 9 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17646,6 +17383,438 @@ var PIDController = (function () {
     return PIDController;
 }());
 exports.PIDController = PIDController;
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Event_1 = __webpack_require__(2);
+__webpack_require__(9);
+var Battery = (function () {
+    function Battery(client) {
+        this.OLDTChanged = new Event_1.Event();
+        this.ChargingChanged = new Event_1.Event();
+        this.capacities = [4150, 4000, 3930, 3750, 3520,
+            3505, 3300, 3230, 3090, 3000, 2900, 2730, 2716, 2700, 2675, 1960, 1821];
+        this.bitrateToJoulesPerSec = (_a = {},
+            _a[0] = 0,
+            _a[25] = 0.6,
+            _a[50] = 0.65,
+            _a[75] = 0.75,
+            _a[100] = 0.8,
+            _a[125] = 0.95,
+            _a[150] = 1.05,
+            _a[175] = 1.15,
+            _a[200] = 1.2,
+            _a[225] = 1.24,
+            _a[250] = 1.25,
+            _a);
+        this._avgLevelDropTimeInSeconds = 180;
+        this._initialTimeStamp = Date.now();
+        if (client === undefined) {
+            this.subscribeForWebAPI();
+        }
+        else {
+            this.Client = client;
+        }
+        var _a;
+    }
+    Battery.prototype.joulesToMiliamps = function (joules) {
+        var volts = 5;
+        return joules / (volts * 3.6);
+    };
+    Battery.prototype.getMiliampsFromBitrate = function (bitrate) {
+        var nearestMultiple = Math.floor(bitrate / 25) * 25;
+        var joules = 0;
+        if (bitrate <= 250) {
+            joules = this.bitrateToJoulesPerSec[nearestMultiple];
+        }
+        else {
+            joules = (bitrate * 5) / 1000;
+        }
+        return this.joulesToMiliamps(joules);
+    };
+    Battery.prototype.subscribeForWebAPI = function () {
+        var _this = this;
+        if (!this.isFunction(navigator.getBattery)) {
+            console.log("The browser doesn't supports the battery interface (navigator.getBattery())");
+            return;
+        }
+        navigator.getBattery().then(function (battery) {
+            _this.initWithAllInfos(battery);
+            battery.onchargingchange = function () { _this.updateChargeInfo(battery); };
+            battery.onlevelchange = function () { _this.updateLevelInfo(battery); };
+            battery.ondischargingtimechange = function () { _this.updateDischargingInfo(battery); };
+        });
+    };
+    Battery.prototype.initWithAllInfos = function (battery) {
+        this.updateChargeInfo(battery);
+        this.updateLevelInfo(battery);
+        this.updateDischargingInfo(battery);
+    };
+    Battery.prototype.updateDischargingInfo = function (battery) {
+        this._dischargingTimeInSeconds = battery.dischargingTime;
+        console.log("Battery discharging time: " + battery.dischargingTime + " seconds");
+    };
+    Battery.prototype.updateLevelInfo = function (battery) {
+        this._level = battery.level;
+        var actualTimeStamp = Date.now();
+        var dTime = actualTimeStamp - this._initialTimeStamp;
+        this._initialTimeStamp = actualTimeStamp;
+        if (this._levelDropTimeInSeconds === undefined) {
+            this._levelDropTimeInSeconds = this._avgLevelDropTimeInSeconds;
+        }
+        else {
+            this._levelDropTimeInSeconds = dTime / 1000;
+            this._levelDropTimeInSeconds = this._isCharging ? Infinity : this._levelDropTimeInSeconds;
+            this.OLDTChanged.trigger(this._levelDropTimeInSeconds);
+        }
+        console.log("Battery level: " + battery.level * 100 + " %");
+    };
+    Battery.prototype.updateChargeInfo = function (battery) {
+        this._isCharging = battery.charging;
+        if (this.level !== undefined) {
+            this.ChargingChanged.trigger(this._isCharging);
+        }
+        console.log("Battery charging? " + (battery.charging ? "Yes" : "No"));
+    };
+    Object.defineProperty(Battery.prototype, "levelDropTimeInSeconds", {
+        get: function () {
+            return this._levelDropTimeInSeconds;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Battery.prototype, "isCharging", {
+        get: function () {
+            return this._isCharging;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Battery.prototype, "level", {
+        get: function () {
+            return this._level;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Battery.prototype, "dischargingTimeInSeconds", {
+        get: function () {
+            return this._dischargingTimeInSeconds;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Battery.prototype, "Client", {
+        get: function () {
+            return this._client;
+        },
+        set: function (value) {
+            this._client = value;
+            this.ChargingChanged.allOff();
+            this._capacity = this.capacities[Math.floor(Math.random() * this.capacities.length)];
+            this.reset();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Battery.prototype.maintainBatteryInfos = function (dt) {
+        if (!this.Client) {
+            return;
+        }
+        this.numOfMaintenance++;
+        var bitrate = Math.floor(this.Client.getDownloadSpeed() + this.Client.getUploadSpeed());
+        var energyConsumedInOneSec = 10 * this.getMiliampsFromBitrate(bitrate);
+        var energyConsumed = energyConsumedInOneSec * dt;
+        this._actualCapacity -= Math.floor(energyConsumed);
+        this._level = Math.floor((this._actualCapacity / this._capacity) * 100) / 100;
+        var drainedPercentage = energyConsumed / this._capacity;
+        var oldt = undefined;
+        if (drainedPercentage > 0) {
+            oldt = Math.floor(dt / (drainedPercentage * 100));
+            this.sumOLDT += oldt;
+            this.OLDTChanged.trigger(oldt);
+            var avgOLDT = this.sumOLDT / this.numOfMaintenance;
+            this._dischargingTimeInSeconds = Math.floor(avgOLDT * this._level * 100);
+        }
+        var peerInfo = {
+            property: "peerId",
+            value: this.Client.getPeerId()
+        };
+        var capacityInfo = {
+            property: "capacity",
+            value: this._actualCapacity + "/" + this._capacity + "(MAh)"
+        };
+        var downloadInfo = {
+            property: "download",
+            value: this.Client.getDownloadSpeed() + "(KBps)"
+        };
+        var uploadInfo = {
+            property: "upload",
+            value: this.Client.getUploadSpeed() + "(KBps)"
+        };
+        var levelInfo = {
+            property: "level",
+            value: Math.floor(this._level * 100) + "(%)"
+        };
+        var dischargingTimeInfo = {
+            property: "discharging time",
+            value: this._dischargingTimeInSeconds + "(s)"
+        };
+        var OLDTInfo = {
+            property: "OLDT",
+            value: oldt + "(s/%)"
+        };
+        var tableInfo = [peerInfo, capacityInfo, downloadInfo, uploadInfo, levelInfo, dischargingTimeInfo, OLDTInfo];
+        console.table(tableInfo);
+    };
+    Battery.prototype.reset = function () {
+        this._actualCapacity = this._capacity;
+        this._level = 1;
+        this._isCharging = false;
+        this.sumOLDT = 0;
+        this.numOfMaintenance = 0;
+        this._dischargingTimeInSeconds = 70000;
+    };
+    Object.defineProperty(Battery.prototype, "Capacity", {
+        get: function () {
+            return this._capacity;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Battery.prototype.isFunction = function (functionToCheck) {
+        var getType = {};
+        return functionToCheck && getType.toString.call(functionToCheck) === '[object Function]';
+    };
+    return Battery;
+}());
+exports.Battery = Battery;
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var ArgsToMatchersValidator = (function () {
+    function ArgsToMatchersValidator() {
+    }
+    ArgsToMatchersValidator.prototype.validate = function (matchers, args) {
+        if (matchers.length !== args.length) {
+            return false;
+        }
+        return matchers.every(function (matcher, index) { return matcher.match(args[index]); });
+    };
+    return ArgsToMatchersValidator;
+}());
+exports.ArgsToMatchersValidator = ArgsToMatchersValidator;
+//# sourceMappingURL=ArgsToMatchersValidator.js.map
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var AbstractMethodStub = (function () {
+    function AbstractMethodStub() {
+    }
+    AbstractMethodStub.prototype.getGroupIndex = function () {
+        return this.groupIndex;
+    };
+    return AbstractMethodStub;
+}());
+exports.AbstractMethodStub = AbstractMethodStub;
+//# sourceMappingURL=AbstractMethodStub.js.map
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var PIDController_1 = __webpack_require__(4);
+var ScoreAdjuster = (function () {
+    function ScoreAdjuster(battery) {
+        this._adjustment = 1;
+        this._battery = battery;
+        this._maxAdjustment = 500;
+        this._targetBatteryLevelDropTime = 180;
+        this._ctr = new PIDController_1.PIDController({
+            k_p: 0.8,
+            k_i: 0.5,
+            k_d: 0.3,
+            i_max: this._maxAdjustment
+        });
+        this._ctr.setTarget(this._targetBatteryLevelDropTime);
+        this._battery.OLDTChanged.on(this);
+    }
+    ScoreAdjuster.prototype.dataAvailable = function (measuredLevelDropTime) {
+        if (measuredLevelDropTime === Infinity) {
+            this._adjustment = 1;
+            this._ctr.reset();
+            console.log("Measured battery level drop time: " +
+                measuredLevelDropTime + "(sec) | Adjustment: " + this._adjustment);
+            return;
+        }
+        var output = this._ctr.update(measuredLevelDropTime);
+        var dOutput = output / this._maxAdjustment;
+        var sign = output < 0 ? -1 : 1;
+        var nAdjustment = Math.abs(dOutput) < 1 ? dOutput : sign;
+        this._adjustment = this.normalize(-nAdjustment, -1, 1);
+        console.log("Measured battery level drop time: " +
+            measuredLevelDropTime + "(sec) | Adjustment: " + this._adjustment);
+    };
+    ScoreAdjuster.prototype.normalize = function (data, dataMin, dataMax) {
+        return (data - dataMin) / (dataMax - dataMin);
+    };
+    Object.defineProperty(ScoreAdjuster.prototype, "adjustment", {
+        get: function () {
+            return this._adjustment;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    return ScoreAdjuster;
+}());
+exports.ScoreAdjuster = ScoreAdjuster;
+
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+(function () {
+  'use strict';
+
+  function setupConsoleTable() {
+    if (typeof console === 'undefined') {
+      throw new Error('Weird, console object is undefined');
+    }
+    if (typeof console.table === 'function') {
+      // if it is not OUR function, overwrite it
+      if (console.table === consoleTable) {
+        return;
+      }
+    }
+
+    function isType(t, x) {
+      return typeof x === t;
+    }
+
+    var isString = isType.bind(null, 'string');
+
+    function isArrayOf(isTypeFn, a) {
+      return Array.isArray(a) &&
+        a.every(isTypeFn);
+    }
+
+    var isArrayOfStrings = isArrayOf.bind(null, isString);
+    var isArrayOfArrays = isArrayOf.bind(null, Array.isArray);
+
+    var Table = __webpack_require__(17);
+
+    function arrayToString(arr) {
+      var t = new Table();
+      arr.forEach(function (record) {
+        if (typeof record === 'string' ||
+          typeof record === 'number') {
+          t.cell('item', record);
+        } else {
+          // assume plain object
+          Object.keys(record).forEach(function (property) {
+            t.cell(property, record[property]);
+          });
+        }
+        t.newRow();
+      });
+      return t.toString();
+    }
+
+    function printTableWithColumnTitles(titles, items) {
+      var t = new Table();
+      items.forEach(function (item) {
+        item.forEach(function (value, k) {
+          t.cell(titles[k], value);
+        });
+        t.newRow();
+      });
+      var str = t.toString();
+      console.log(str);
+    }
+
+    function printTitleTable(title, arr) {
+      var str = arrayToString(arr);
+      var rowLength = str.indexOf('\n');
+      if (rowLength > 0) {
+        if (title.length > rowLength) {
+          rowLength = title.length;
+        }
+        console.log(title);
+        var sep = '-', k, line = '';
+        for (k = 0; k < rowLength; k += 1) {
+          line += sep;
+        }
+        console.log(line);
+      }
+      console.log(str);
+    }
+
+    function objectToArray(obj) {
+      var keys = Object.keys(obj);
+      return keys.map(function (key) {
+        return {
+          key: key,
+          value: obj[key]
+        };
+      });
+    }
+
+    function objectToString(obj) {
+      return arrayToString(objectToArray(obj));
+    }
+
+    function consoleTable () {
+      var args = Array.prototype.slice.call(arguments);
+
+      if (args.length === 2 &&
+        typeof args[0] === 'string' &&
+        Array.isArray(args[1])) {
+
+        return printTitleTable(args[0], args[1]);
+      }
+
+      if (args.length === 2 &&
+        isArrayOfStrings(args[0]) &&
+        isArrayOfArrays(args[1])) {
+        return printTableWithColumnTitles(args[0], args[1]);
+      }
+
+      args.forEach(function (k) {
+        if (typeof k === 'string') {
+          return console.log(k);
+        } else if (Array.isArray(k)) {
+          console.log(arrayToString(k));
+        } else if (typeof k === 'object') {
+          console.log(objectToString(k));
+        }
+      });
+    }
+    console.table = consoleTable;
+  }
+
+  setupConsoleTable();
+}());
 
 
 /***/ }),
@@ -17745,14 +17914,14 @@ exports.MethodToStub = MethodToStub;
 Object.defineProperty(exports, "__esModule", { value: true });
 var _ = __webpack_require__(1);
 var Matcher_1 = __webpack_require__(0);
-var MethodAction_1 = __webpack_require__(44);
-var MethodStubCollection_1 = __webpack_require__(45);
+var MethodAction_1 = __webpack_require__(42);
+var MethodStubCollection_1 = __webpack_require__(43);
 var MethodToStub_1 = __webpack_require__(12);
 var ReturnValueMethodStub_1 = __webpack_require__(11);
-var ts_mockito_1 = __webpack_require__(5);
-var MockableFunctionsFinder_1 = __webpack_require__(46);
-var ObjectInspector_1 = __webpack_require__(47);
-var ObjectPropertyCodeRetriever_1 = __webpack_require__(48);
+var ts_mockito_1 = __webpack_require__(3);
+var MockableFunctionsFinder_1 = __webpack_require__(44);
+var ObjectInspector_1 = __webpack_require__(45);
+var ObjectPropertyCodeRetriever_1 = __webpack_require__(46);
 var Mocker = (function () {
     function Mocker(clazz, instance) {
         if (instance === void 0) { instance = {}; }
@@ -17943,8 +18112,126 @@ exports.Mocker = Mocker;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var ScoreAdjuster_test_1 = __webpack_require__(52);
-var ScoreComputer_test_1 = __webpack_require__(15);
+var ConnectionType;
+(function (ConnectionType) {
+    ConnectionType["wifi"] = "wifi";
+    ConnectionType["cellular"] = "cellular";
+    ConnectionType["ethernet"] = "ethernet";
+})(ConnectionType = exports.ConnectionType || (exports.ConnectionType = {}));
+var Network = (function () {
+    function Network(client) {
+        this._type = ConnectionType.wifi;
+        this.Client = client;
+        this.maintainNetworkInfos();
+    }
+    Network.prototype.maintainNetworkInfos = function () {
+        var _this = this;
+        if (!this.Client) {
+            var networkInfo_1 = navigator.connection;
+            setInterval(function () {
+                if (networkInfo_1 === undefined) {
+                    _this.measureDownloadSpeed();
+                    _this.measureUploadSpeed();
+                }
+                else {
+                    _this.updateNetworkInfos(networkInfo_1);
+                }
+            }, 10000);
+        }
+    };
+    Network.prototype.updateNetworkInfos = function (networkInfo) {
+        if (networkInfo.type !== undefined) {
+            this._type = networkInfo.type;
+        }
+        this._downlink = networkInfo.downlink;
+        this._effectiveType = networkInfo.effectiveType;
+        this._roundTripTime = networkInfo.rtt;
+    };
+    Network.prototype.measureUploadSpeed = function () {
+        this._uplink = 1;
+    };
+    Network.prototype.measureDownloadSpeed = function () {
+        var _this = this;
+        var imageAddr = "https://upload.wikimedia.org/wikipedia/commons/2/2d/Snake_River_%285mb%29.jpg";
+        var downloadSize = 5245329;
+        var download = new Image();
+        var startTime, endTime, duration;
+        var bitsLoaded = downloadSize * 8;
+        startTime = (new Date()).getTime();
+        var cacheBuster = "?nnn=" + startTime;
+        download.src = imageAddr + cacheBuster;
+        download.onload = function () {
+            endTime = (new Date()).getTime();
+            duration = (endTime - startTime) / 1000;
+            var speedbps = Number((bitsLoaded / duration).toFixed(2));
+            var speedkbps = Number((speedbps / 1024).toFixed(2));
+            _this._downlink = Number((speedkbps / 1024).toFixed(2));
+        };
+    };
+    Object.defineProperty(Network.prototype, "type", {
+        get: function () {
+            return this._type;
+        },
+        set: function (value) {
+            this._type = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Network.prototype, "downlink", {
+        get: function () {
+            if (!this.Client) {
+                return this._downlink;
+            }
+            else {
+                return this.Client.getBandwidth();
+            }
+        },
+        set: function (value) {
+            this._downlink = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Network.prototype, "uplink", {
+        get: function () {
+            if (!this.Client) {
+                return this._uplink;
+            }
+            else {
+                return this.Client.getBandwidth();
+            }
+        },
+        set: function (value) {
+            this._uplink = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Network.prototype, "Client", {
+        get: function () {
+            return this._client;
+        },
+        set: function (value) {
+            this._client = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    return Network;
+}());
+exports.Network = Network;
+
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var ScoreAdjuster_test_1 = __webpack_require__(16);
+var ScoreComputer_test_1 = __webpack_require__(50);
 var MainTest = (function () {
     function MainTest() {
         new ScoreAdjuster_test_1.ScoreAdjusterTester();
@@ -17957,505 +18244,137 @@ new MainTest();
 
 
 /***/ }),
-/* 15 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var Device_1 = __webpack_require__(2);
-var Battery_1 = __webpack_require__(8);
-var ScoreComputer_1 = __webpack_require__(16);
-var PIDController_1 = __webpack_require__(9);
-var ts_mockito_1 = __webpack_require__(5);
-var Network_1 = __webpack_require__(4);
-var Event_1 = __webpack_require__(3);
-var ScoreComputerTester = (function () {
-    function ScoreComputerTester() {
-        this.linearOLDT = function (val) {
-            return 60;
-        };
-        this.exponentialOLDT = function (val) {
-            return 8000 / Math.pow(val, 2);
-        };
-        this.setup();
-        this.drawTestOne({
-            title: 'Scenario One',
-            domElementId: 'score-computer-test-one',
-        });
-        this.drawTestTwo({
-            title: 'Scenario two',
-            domElementId: 'score-computer-test-two'
-        });
-    }
-    ScoreComputerTester.prototype.drawTestOne = function (testInfo) {
-        var traces = this.buildScenarioOne();
-        var layout = {
-            xaxis: {
-                title: 'time (min)',
-                type: 'number',
-            },
-            yaxis: {
-                title: 'score / battery',
-                type: 'number',
-                range: [0, 1]
-            },
-            title: testInfo.title
-        };
-        var data = [traces[0], traces[1]];
-        Plotly.newPlot(testInfo.domElementId, data, layout);
-    };
-    ScoreComputerTester.prototype.drawTestTwo = function (testInfo) {
-        var traces = this.buildScenarioTwo();
-        var layout = {
-            xaxis: {
-                title: 'time (min)',
-                type: 'number',
-            },
-            yaxis: {
-                title: 'score / battery',
-                type: 'number',
-                range: [0, 1]
-            },
-            title: testInfo.title
-        };
-        var data = [traces[0], traces[1]];
-        Plotly.newPlot(testInfo.domElementId, data, layout);
-    };
-    ScoreComputerTester.prototype.buildScenarioOne = function () {
-        var x = [];
-        var y = [];
-        var y2 = [];
-        var batteryLevel = 1;
-        ts_mockito_1.when(this.mockedBattery.level).thenReturn(batteryLevel);
-        ts_mockito_1.when(this.mockedNetwork.type).thenReturn(Network_1.ConnectionType.wifi);
-        ts_mockito_1.when(this.mockedNetwork.downlink).thenReturn(this.scoreComputer._downlinkLimit);
-        ts_mockito_1.when(this.mockedNetwork.uplink).thenReturn(this.scoreComputer._uplinkLimit);
-        var sampleNum = 200;
-        for (var sampleCount = 0; sampleCount < sampleNum; sampleCount++) {
-            ts_mockito_1.when(this.mockedBattery.dischargingTimeInSeconds)
-                .thenReturn(this.scoreComputer._dischargingTimeLimit * batteryLevel);
-            if (sampleCount <= sampleNum / 2) {
-                ts_mockito_1.when(this.mockedBattery.isCharging).thenReturn(false);
-                batteryLevel -= (1 / (this.linearOLDT(sampleCount) / 60)) / 100;
-            }
-            else {
-                ts_mockito_1.when(this.mockedBattery.isCharging).thenReturn(true);
-                batteryLevel += (1 / (this.linearOLDT(sampleCount) / 60)) / 100;
-            }
-            ts_mockito_1.when(this.mockedBattery.level).thenReturn(batteryLevel);
-            this.scoreComputer._scoreAdjuster._ctr.setSampling(this.linearOLDT(sampleCount));
-            this.scoreComputer._scoreAdjuster.dataAvailable(this.linearOLDT(sampleCount));
-            this.scoreComputer.compute();
-            x.push(sampleCount);
-            y.push(this.scoreComputer.ActualScore);
-            y2.push(batteryLevel);
-        }
-        var scoreTrace = {
-            x: x,
-            y: y,
-            name: "score trace",
-            type: "scatter"
-        };
-        var batteryTrace = {
-            x: x,
-            y: y2,
-            name: "battery trace",
-            type: "scatter"
-        };
-        return [scoreTrace, batteryTrace];
-    };
-    ScoreComputerTester.prototype.buildScenarioTwo = function () {
-        var x = [];
-        var y = [];
-        var y2 = [];
-        var batteryLevel = 1;
-        ts_mockito_1.when(this.mockedNetwork.type).thenReturn(Network_1.ConnectionType.wifi);
-        ts_mockito_1.when(this.mockedBattery.level).thenReturn(batteryLevel);
-        ts_mockito_1.when(this.mockedBattery.isCharging).thenReturn(false);
-        var sampleNum = 40;
-        for (var sampleCount = 0; sampleCount < sampleNum; sampleCount++) {
-            ts_mockito_1.when(this.mockedBattery.dischargingTimeInSeconds)
-                .thenReturn(this.scoreComputer._dischargingTimeLimit * batteryLevel);
-            if (sampleCount <= sampleNum / 3) {
-                ts_mockito_1.when(this.mockedNetwork.downlink).thenReturn(this.scoreComputer._downlinkLimit / 2);
-                ts_mockito_1.when(this.mockedNetwork.uplink).thenReturn(this.scoreComputer._uplinkLimit / 2);
-                batteryLevel -= (1 / (this.linearOLDT(sampleCount) / 60)) / 100;
-                this.scoreComputer._scoreAdjuster._ctr.setSampling(this.linearOLDT(sampleCount));
-                this.scoreComputer._scoreAdjuster.dataAvailable(this.linearOLDT(sampleCount));
-            }
-            else {
-                ts_mockito_1.when(this.mockedNetwork.downlink).thenReturn(this.scoreComputer._downlinkLimit);
-                ts_mockito_1.when(this.mockedNetwork.uplink).thenReturn(this.scoreComputer._uplinkLimit);
-                batteryLevel -= (1 / (this.exponentialOLDT(sampleCount) / 60)) / 100;
-                this.scoreComputer._scoreAdjuster._ctr.setSampling(this.exponentialOLDT(sampleCount));
-                this.scoreComputer._scoreAdjuster.dataAvailable(this.exponentialOLDT(sampleCount));
-            }
-            ts_mockito_1.when(this.mockedBattery.level).thenReturn(batteryLevel);
-            this.scoreComputer.compute();
-            x.push(sampleCount);
-            y.push(this.scoreComputer.ActualScore);
-            y2.push(batteryLevel);
-        }
-        var scoreTrace = {
-            x: x,
-            y: y,
-            name: "score trace",
-            type: "scatter"
-        };
-        var batteryTrace = {
-            x: x,
-            y: y2,
-            name: "battery trace",
-            type: "scatter"
-        };
-        return [scoreTrace, batteryTrace];
-    };
-    ScoreComputerTester.prototype.setup = function () {
-        this.mockedDevice = ts_mockito_1.mock(Device_1.Device);
-        this.mockedBattery = ts_mockito_1.mock(Battery_1.Battery);
-        this.mockedNetwork = ts_mockito_1.mock(Network_1.Network);
-        var mockedEvent = ts_mockito_1.mock(Event_1.Event);
-        ts_mockito_1.when(this.mockedBattery.OLDTChanged).thenReturn(ts_mockito_1.instance(mockedEvent));
-        ts_mockito_1.when(this.mockedDevice.battery).thenReturn(ts_mockito_1.instance(this.mockedBattery));
-        ts_mockito_1.when(this.mockedDevice.network).thenReturn(ts_mockito_1.instance(this.mockedNetwork));
-        this.scoreComputer = new ScoreComputer_1.ScoreComputer(ts_mockito_1.instance(this.mockedDevice));
-        this.scoreComputer._scoreAdjuster._ctr = new PIDController_1.PIDController({
-            k_p: 0.5,
-            k_i: 0.5,
-            k_d: 0.5,
-            i_max: 200
-        });
-        var targetOneLevelDropTime = 20;
-        this.scoreComputer._scoreAdjuster._ctr.setTarget(targetOneLevelDropTime);
-    };
-    return ScoreComputerTester;
-}());
-exports.ScoreComputerTester = ScoreComputerTester;
-
-
-/***/ }),
 /* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Device_1 = __webpack_require__(2);
-var ScoreAdjuster_1 = __webpack_require__(17);
-var Network_1 = __webpack_require__(4);
-var Event_1 = __webpack_require__(3);
-__webpack_require__(18);
-var weights;
-(function (weights) {
-    weights[weights["batteryLevel"] = 0.2] = "batteryLevel";
-    weights[weights["batteryChargingTime"] = 0.2] = "batteryChargingTime";
-    weights[weights["batteryDischargingTime"] = 0.2] = "batteryDischargingTime";
-    weights[weights["downloadSpeed"] = 0.15] = "downloadSpeed";
-    weights[weights["uploadSpeed"] = 0.15] = "uploadSpeed";
-    weights[weights["adjustment"] = 0.3] = "adjustment";
-})(weights = exports.weights || (exports.weights = {}));
-var ScoreComputer = (function () {
-    function ScoreComputer(device) {
-        this.ScoreComputed = new Event_1.Event();
-        this._device = device === undefined ? new Device_1.Device() : device;
-        this._scoreAdjuster = new ScoreAdjuster_1.ScoreAdjuster(this._device);
-        this._actualScore = 1;
-        this._downlinkLimit = 2.5;
-        this._uplinkLimit = 1;
-        this._dischargingTimeLimit = 7200;
+var ScoreAdjuster_1 = __webpack_require__(8);
+var Battery_1 = __webpack_require__(5);
+var PIDController_1 = __webpack_require__(4);
+var Event_1 = __webpack_require__(2);
+var ts_mockito_1 = __webpack_require__(3);
+var ScoreAdjusterTester = (function () {
+    function ScoreAdjusterTester() {
+        this.linearOLDT = function (val) {
+            return 300;
+        };
+        this.exponentialOLDT = function (val) {
+            var constant = 20;
+            return Math.pow(constant, 2) - Math.pow(val, 2);
+        };
+        this.periodicOLDT = function (val) {
+            return 350 * Math.abs(Math.sin(val / 4));
+        };
+        this.randomOLDT = function (val) {
+            return 350 * Math.random();
+        };
+        console.log("helloo");
+        this.setup();
+        this.drawTest({
+            title: 'Linear battery drain scenario',
+            domElementId: 'score-adjuster-test-linear',
+            batteryDrainFunction: this.linearOLDT
+        });
+        this.drawTest({
+            title: 'Exponential battery drain scenario',
+            domElementId: 'score-adjuster-test-exponential',
+            batteryDrainFunction: this.exponentialOLDT
+        });
+        this.drawTest({
+            title: 'Periodic battery drain scenario',
+            domElementId: 'score-adjuster-test-periodic',
+            batteryDrainFunction: this.periodicOLDT
+        });
+        this.drawTest({
+            title: 'Randromised battery drain scenario',
+            domElementId: 'score-adjuster-test-random',
+            batteryDrainFunction: this.randomOLDT
+        });
     }
-    ScoreComputer.prototype.start = function () {
-        var _this = this;
-        setTimeout(function () { _this.compute(); }, 1000);
-        setInterval(function () {
-            _this.compute();
-        }, 60000);
-    };
-    ScoreComputer.prototype.subscribe = function (subscriber) {
-        this.ScoreComputed.on(subscriber);
-    };
-    ScoreComputer.prototype.compute = function () {
-        var battery = this._device.battery;
-        var network = this._device.network;
-        if (network.type === Network_1.ConnectionType.cellular ||
-            (battery.level < 0.15 && !battery.isCharging)) {
-            this._actualScore = 0;
-            console.log("Network type: Cellular.");
-            console.log("OR");
-            console.log("Battery level is under 15% AND device is not charging.");
-            console.log("------(SCORE = 0)------");
-            return;
+    ScoreAdjusterTester.prototype.drawTest = function (testInfo) {
+        this.beforeEach();
+        for (var i = 0; i < 20; ++i) {
+            var oldtValue = testInfo.batteryDrainFunction(i);
+            this.scoreAdjuster._ctr.setSampling(oldtValue);
+            this.scoreAdjuster.dataAvailable(oldtValue);
+            this.x.push(i);
+            this.adjusterY.push(this.scoreAdjuster.adjustment);
+            this.oldtY.push(oldtValue);
         }
-        if ((network.type === Network_1.ConnectionType.wifi ||
-            network.type === Network_1.ConnectionType.ethernet) &&
-            battery.isCharging) {
-            this._actualScore = 1;
-            console.log("Network type: WIFI OR ETHERNET.");
-            console.log("AND");
-            console.log("Device is charging.");
-            console.log("------(SCORE = 1)------");
-            return;
-        }
-        var score = 0;
-        var infoTable = [];
-        score += battery.level * weights.batteryLevel;
-        var levelInfo = {
-            property: "battery level",
-            value: battery.level,
-            weigth: weights.batteryLevel,
-            scoreTag: battery.level * weights.batteryLevel
+        var adjusterTrace = {
+            x: this.x,
+            y: this.adjusterY,
+            name: 'adjuster trace',
+            type: 'scatter'
         };
-        infoTable.push(levelInfo);
-        var dischargingTimeScore = battery.dischargingTimeInSeconds / this._dischargingTimeLimit;
-        dischargingTimeScore = dischargingTimeScore < 1 ? dischargingTimeScore : 1;
-        score += dischargingTimeScore * weights.batteryDischargingTime;
-        var dischargeInfo = {
-            property: "discharging time score",
-            value: dischargingTimeScore,
-            weigth: weights.batteryDischargingTime,
-            scoreTag: dischargingTimeScore * weights.batteryDischargingTime
+        var oldtTrace = {
+            x: this.x,
+            y: this.oldtY,
+            xaxis: 'x2',
+            yaxis: 'y2',
+            name: 'OLDT trace',
+            type: 'scatter'
         };
-        infoTable.push(dischargeInfo);
-        var dSpeedScore = (network.downlink / this._downlinkLimit);
-        var uSpeedScore = (network.uplink / this._uplinkLimit);
-        dSpeedScore = dSpeedScore < 1 ? dSpeedScore : 1;
-        uSpeedScore = uSpeedScore < 1 ? uSpeedScore : 1;
-        score += dSpeedScore * weights.downloadSpeed;
-        score += uSpeedScore * weights.uploadSpeed;
-        score += this._scoreAdjuster.adjustment * weights.adjustment;
-        score = score < 0 ? 0 : score;
-        this._actualScore = score;
-        this.ScoreComputed.trigger(score);
-        var downlinkInfo = {
-            property: "downlink",
-            value: dSpeedScore,
-            weigth: weights.downloadSpeed,
-            scoreTag: dSpeedScore * weights.downloadSpeed
+        var layout = {
+            xaxis: {
+                title: 'sample',
+                type: 'number',
+            },
+            yaxis: {
+                title: 'adjustment',
+                type: 'number',
+                range: [0, 1],
+                domain: [0, 0.45],
+            },
+            xaxis2: {
+                anchor: 'y2',
+                type: 'number'
+            },
+            yaxis2: {
+                title: 'One Level Drop Time',
+                type: 'number',
+                domain: [0.55, 1]
+            },
+            title: testInfo.title
         };
-        var uplinkInfo = {
-            property: "uplink",
-            value: uSpeedScore,
-            weigth: weights.uploadSpeed,
-            scoreTag: uSpeedScore * weights.uploadSpeed
-        };
-        var adjusterInfo = {
-            property: "adjustment",
-            value: this._scoreAdjuster.adjustment,
-            weigth: weights.adjustment,
-            scoreTag: this._scoreAdjuster.adjustment * weights.adjustment
-        };
-        var scoreInfo = {
-            property: "TOTAL SCORE",
-            value: "----",
-            weigth: "----",
-            scoreTag: score
-        };
-        infoTable.push(downlinkInfo, uplinkInfo, adjusterInfo, scoreInfo);
-        console.table(infoTable);
+        var data = [adjusterTrace, oldtTrace];
+        Plotly.newPlot(testInfo.domElementId, data, layout);
     };
-    Object.defineProperty(ScoreComputer.prototype, "ActualScore", {
-        get: function () {
-            return this._actualScore;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    return ScoreComputer;
+    ScoreAdjusterTester.prototype.beforeEach = function () {
+        this.x = [];
+        this.adjusterY = [];
+        this.oldtY = [];
+        this.scoreAdjuster._ctr.reset();
+    };
+    ScoreAdjusterTester.prototype.setup = function () {
+        var mockedBattery = ts_mockito_1.mock(Battery_1.Battery);
+        var mockedEvent = ts_mockito_1.mock(Event_1.Event);
+        ts_mockito_1.when(mockedBattery.OLDTChanged).thenReturn(ts_mockito_1.instance(mockedEvent));
+        this.scoreAdjuster = new ScoreAdjuster_1.ScoreAdjuster(ts_mockito_1.instance(mockedBattery));
+        this.scoreAdjuster._ctr = new PIDController_1.PIDController({
+            k_p: 0.8,
+            k_i: 0.4,
+            k_d: 0.3,
+            i_max: 500
+        });
+        var targetOneLevelDropTime = 300;
+        this.scoreAdjuster._ctr.setTarget(targetOneLevelDropTime);
+    };
+    return ScoreAdjusterTester;
 }());
-exports.ScoreComputer = ScoreComputer;
-new ScoreComputer().start();
+exports.ScoreAdjusterTester = ScoreAdjusterTester;
 
 
 /***/ }),
 /* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var Device_1 = __webpack_require__(2);
-var PIDController_1 = __webpack_require__(9);
-var ScoreAdjuster = (function () {
-    function ScoreAdjuster(device) {
-        this._adjustment = 0;
-        this._device = device;
-        this._maxAdjustment = 200;
-        this._targetBatteryLevelDropTime = 240;
-        this._ctr = new PIDController_1.PIDController({
-            k_p: 0.25,
-            k_i: 0.01,
-            k_d: 0.2,
-            i_max: this._maxAdjustment
-        });
-        this._ctr.setTarget(this._targetBatteryLevelDropTime);
-        this._device.battery.OLDTChanged.on(this);
-    }
-    ScoreAdjuster.prototype.dataAvailable = function (measuredLevelDropTime) {
-        if (measuredLevelDropTime === Infinity) {
-            this._adjustment = 1;
-            this._ctr.reset();
-            console.log("Measured battery level drop time: " +
-                measuredLevelDropTime + "(sec) | Adjustment: " + this._adjustment);
-            return;
-        }
-        var output = this._ctr.update(measuredLevelDropTime);
-        var sign = output < 0 ? -1 : 1;
-        if (Math.abs(output) > this._maxAdjustment) {
-            output = sign * this._maxAdjustment;
-        }
-        this._adjustment = -output / this._maxAdjustment;
-        console.log("Measured battery level drop time: " +
-            measuredLevelDropTime + "(sec) | Adjustment: " + this._adjustment);
-    };
-    Object.defineProperty(ScoreAdjuster.prototype, "adjustment", {
-        get: function () {
-            return this._adjustment;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    return ScoreAdjuster;
-}());
-exports.ScoreAdjuster = ScoreAdjuster;
-new ScoreAdjuster(new Device_1.Device());
-
-
-/***/ }),
-/* 18 */
-/***/ (function(module, exports, __webpack_require__) {
-
-(function () {
-  'use strict';
-
-  function setupConsoleTable() {
-    if (typeof console === 'undefined') {
-      throw new Error('Weird, console object is undefined');
-    }
-    if (typeof console.table === 'function') {
-      // if it is not OUR function, overwrite it
-      if (console.table === consoleTable) {
-        return;
-      }
-    }
-
-    function isType(t, x) {
-      return typeof x === t;
-    }
-
-    var isString = isType.bind(null, 'string');
-
-    function isArrayOf(isTypeFn, a) {
-      return Array.isArray(a) &&
-        a.every(isTypeFn);
-    }
-
-    var isArrayOfStrings = isArrayOf.bind(null, isString);
-    var isArrayOfArrays = isArrayOf.bind(null, Array.isArray);
-
-    var Table = __webpack_require__(19);
-
-    function arrayToString(arr) {
-      var t = new Table();
-      arr.forEach(function (record) {
-        if (typeof record === 'string' ||
-          typeof record === 'number') {
-          t.cell('item', record);
-        } else {
-          // assume plain object
-          Object.keys(record).forEach(function (property) {
-            t.cell(property, record[property]);
-          });
-        }
-        t.newRow();
-      });
-      return t.toString();
-    }
-
-    function printTableWithColumnTitles(titles, items) {
-      var t = new Table();
-      items.forEach(function (item) {
-        item.forEach(function (value, k) {
-          t.cell(titles[k], value);
-        });
-        t.newRow();
-      });
-      var str = t.toString();
-      console.log(str);
-    }
-
-    function printTitleTable(title, arr) {
-      var str = arrayToString(arr);
-      var rowLength = str.indexOf('\n');
-      if (rowLength > 0) {
-        if (title.length > rowLength) {
-          rowLength = title.length;
-        }
-        console.log(title);
-        var sep = '-', k, line = '';
-        for (k = 0; k < rowLength; k += 1) {
-          line += sep;
-        }
-        console.log(line);
-      }
-      console.log(str);
-    }
-
-    function objectToArray(obj) {
-      var keys = Object.keys(obj);
-      return keys.map(function (key) {
-        return {
-          key: key,
-          value: obj[key]
-        };
-      });
-    }
-
-    function objectToString(obj) {
-      return arrayToString(objectToArray(obj));
-    }
-
-    function consoleTable () {
-      var args = Array.prototype.slice.call(arguments);
-
-      if (args.length === 2 &&
-        typeof args[0] === 'string' &&
-        Array.isArray(args[1])) {
-
-        return printTitleTable(args[0], args[1]);
-      }
-
-      if (args.length === 2 &&
-        isArrayOfStrings(args[0]) &&
-        isArrayOfArrays(args[1])) {
-        return printTableWithColumnTitles(args[0], args[1]);
-      }
-
-      args.forEach(function (k) {
-        if (typeof k === 'string') {
-          return console.log(k);
-        } else if (Array.isArray(k)) {
-          console.log(arrayToString(k));
-        } else if (typeof k === 'object') {
-          console.log(objectToString(k));
-        }
-      });
-    }
-    console.table = consoleTable;
-  }
-
-  setupConsoleTable();
-}());
-
-
-/***/ }),
-/* 19 */
-/***/ (function(module, exports, __webpack_require__) {
-
 var wcwidth
 
 try {
-  wcwidth = __webpack_require__(20)
+  wcwidth = __webpack_require__(18)
 } catch(e) {}
 
 module.exports = Table
@@ -18900,14 +18819,14 @@ Table.prototype.log = function() {
 
 
 /***/ }),
-/* 20 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var defaults = __webpack_require__(21)
-var combining = __webpack_require__(27)
+var defaults = __webpack_require__(19)
+var combining = __webpack_require__(25)
 
 var DEFAULTS = {
   nul: 0,
@@ -19006,10 +18925,10 @@ function bisearch(ucs) {
 
 
 /***/ }),
-/* 21 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var clone = __webpack_require__(22);
+var clone = __webpack_require__(20);
 
 module.exports = function(options, defaults) {
   options = options || {};
@@ -19024,7 +18943,7 @@ module.exports = function(options, defaults) {
 };
 
 /***/ }),
-/* 22 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(Buffer) {var clone = (function() {
@@ -19188,10 +19107,10 @@ if (typeof module === 'object' && module.exports) {
   module.exports = clone;
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(23).Buffer))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(21).Buffer))
 
 /***/ }),
-/* 23 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19205,9 +19124,9 @@ if (typeof module === 'object' && module.exports) {
 
 
 
-var base64 = __webpack_require__(24)
-var ieee754 = __webpack_require__(25)
-var isArray = __webpack_require__(26)
+var base64 = __webpack_require__(22)
+var ieee754 = __webpack_require__(23)
+var isArray = __webpack_require__(24)
 
 exports.Buffer = Buffer
 exports.SlowBuffer = SlowBuffer
@@ -20988,7 +20907,7 @@ function isnan (val) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)))
 
 /***/ }),
-/* 24 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21109,7 +21028,7 @@ function fromByteArray (uint8) {
 
 
 /***/ }),
-/* 25 */
+/* 23 */
 /***/ (function(module, exports) {
 
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
@@ -21199,7 +21118,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
 
 
 /***/ }),
-/* 26 */
+/* 24 */
 /***/ (function(module, exports) {
 
 var toString = {}.toString;
@@ -21210,7 +21129,7 @@ module.exports = Array.isArray || function (arr) {
 
 
 /***/ }),
-/* 27 */
+/* 25 */
 /***/ (function(module, exports) {
 
 module.exports = [
@@ -21266,7 +21185,7 @@ module.exports = [
 
 
 /***/ }),
-/* 28 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21303,7 +21222,7 @@ exports.ArgCaptor = ArgCaptor;
 //# sourceMappingURL=ArgCaptor.js.map
 
 /***/ }),
-/* 29 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21338,7 +21257,7 @@ exports.AnyFunctionMatcher = AnyFunctionMatcher;
 //# sourceMappingURL=AnyFunctionMatcher.js.map
 
 /***/ }),
-/* 30 */
+/* 28 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -21366,7 +21285,7 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 31 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21401,7 +21320,7 @@ exports.AnyNumberMatcher = AnyNumberMatcher;
 //# sourceMappingURL=AnyNumberMatcher.js.map
 
 /***/ }),
-/* 32 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21440,7 +21359,7 @@ exports.AnyOfClassMatcher = AnyOfClassMatcher;
 //# sourceMappingURL=AnyOfClassMatcher.js.map
 
 /***/ }),
-/* 33 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21475,7 +21394,7 @@ exports.AnyStringMatcher = AnyStringMatcher;
 //# sourceMappingURL=AnyStringMatcher.js.map
 
 /***/ }),
-/* 34 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21509,7 +21428,7 @@ exports.AnythingMatcher = AnythingMatcher;
 //# sourceMappingURL=AnythingMatcher.js.map
 
 /***/ }),
-/* 35 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21549,7 +21468,7 @@ exports.BetweenMatcher = BetweenMatcher;
 //# sourceMappingURL=BetweenMatcher.js.map
 
 /***/ }),
-/* 36 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21596,7 +21515,7 @@ exports.DeepEqualMatcher = DeepEqualMatcher;
 //# sourceMappingURL=DeepEqualMatcher.js.map
 
 /***/ }),
-/* 37 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21631,7 +21550,7 @@ exports.NotNullMatcher = NotNullMatcher;
 //# sourceMappingURL=NotNullMatcher.js.map
 
 /***/ }),
-/* 38 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21672,15 +21591,15 @@ exports.StrictEqualMatcher = StrictEqualMatcher;
 //# sourceMappingURL=StrictEqualMatcher.js.map
 
 /***/ }),
-/* 39 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var CallFunctionMethodStub_1 = __webpack_require__(40);
+var CallFunctionMethodStub_1 = __webpack_require__(38);
 var ReturnValueMethodStub_1 = __webpack_require__(11);
-var ThrowErrorMethodStub_1 = __webpack_require__(41);
+var ThrowErrorMethodStub_1 = __webpack_require__(39);
 var MethodStubSetter = (function () {
     function MethodStubSetter(methodToStub) {
         this.methodToStub = methodToStub;
@@ -21719,7 +21638,7 @@ exports.MethodStubSetter = MethodStubSetter;
 //# sourceMappingURL=MethodStubSetter.js.map
 
 /***/ }),
-/* 40 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21762,7 +21681,7 @@ exports.CallFunctionMethodStub = CallFunctionMethodStub;
 //# sourceMappingURL=CallFunctionMethodStub.js.map
 
 /***/ }),
-/* 41 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21805,13 +21724,13 @@ exports.ThrowErrorMethodStub = ThrowErrorMethodStub;
 //# sourceMappingURL=ThrowErrorMethodStub.js.map
 
 /***/ }),
-/* 42 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var MethodCallToStringConverter_1 = __webpack_require__(43);
+var MethodCallToStringConverter_1 = __webpack_require__(41);
 var MethodStubVerificator = (function () {
     function MethodStubVerificator(methodToVerify) {
         this.methodToVerify = methodToVerify;
@@ -21901,7 +21820,7 @@ exports.MethodStubVerificator = MethodStubVerificator;
 //# sourceMappingURL=MethodStubVerificator.js.map
 
 /***/ }),
-/* 43 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21920,7 +21839,7 @@ exports.MethodCallToStringConverter = MethodCallToStringConverter;
 //# sourceMappingURL=MethodCallToStringConverter.js.map
 
 /***/ }),
-/* 44 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21954,7 +21873,7 @@ exports.MethodAction = MethodAction;
 //# sourceMappingURL=MethodAction.js.map
 
 /***/ }),
-/* 45 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22001,7 +21920,7 @@ exports.MethodStubCollection = MethodStubCollection;
 //# sourceMappingURL=MethodStubCollection.js.map
 
 /***/ }),
-/* 46 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22028,7 +21947,7 @@ exports.MockableFunctionsFinder = MockableFunctionsFinder;
 //# sourceMappingURL=MockableFunctionsFinder.js.map
 
 /***/ }),
-/* 47 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22055,7 +21974,7 @@ exports.ObjectInspector = ObjectInspector;
 //# sourceMappingURL=ObjectInspector.js.map
 
 /***/ }),
-/* 48 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22084,7 +22003,7 @@ exports.ObjectPropertyCodeRetriever = ObjectPropertyCodeRetriever;
 //# sourceMappingURL=ObjectPropertyCodeRetriever.js.map
 
 /***/ }),
-/* 49 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22102,8 +22021,8 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var _ = __webpack_require__(1);
 var Mock_1 = __webpack_require__(13);
-var RealMethod_1 = __webpack_require__(50);
-var CallThroughMethodStub_1 = __webpack_require__(51);
+var RealMethod_1 = __webpack_require__(48);
+var CallThroughMethodStub_1 = __webpack_require__(49);
 var Spy = (function (_super) {
     __extends(Spy, _super);
     function Spy(instance) {
@@ -22163,7 +22082,7 @@ exports.Spy = Spy;
 //# sourceMappingURL=Spy.js.map
 
 /***/ }),
-/* 50 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22180,7 +22099,7 @@ exports.RealMethod = RealMethod;
 //# sourceMappingURL=RealMethod.js.map
 
 /***/ }),
-/* 51 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22209,130 +22128,342 @@ exports.CallThroughMethodStub = CallThroughMethodStub;
 //# sourceMappingURL=CallThroughMethodStub.js.map
 
 /***/ }),
-/* 52 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var ScoreAdjuster_1 = __webpack_require__(17);
-var Device_1 = __webpack_require__(2);
-var Battery_1 = __webpack_require__(8);
-var PIDController_1 = __webpack_require__(9);
-var Event_1 = __webpack_require__(3);
-var ts_mockito_1 = __webpack_require__(5);
-var ScoreAdjusterTester = (function () {
-    function ScoreAdjusterTester() {
+var Battery_1 = __webpack_require__(5);
+var ScoreComputer_1 = __webpack_require__(51);
+var PIDController_1 = __webpack_require__(4);
+var ts_mockito_1 = __webpack_require__(3);
+var Network_1 = __webpack_require__(14);
+var Event_1 = __webpack_require__(2);
+var ScoreComputerTester = (function () {
+    function ScoreComputerTester() {
         this.linearOLDT = function (val) {
-            return 300;
+            return 60;
         };
         this.exponentialOLDT = function (val) {
-            var constant = 20;
-            return Math.pow(constant, 2) - Math.pow(val, 2);
+            return 8000 / Math.pow(val, 2);
         };
-        this.periodicOLDT = function (val) {
-            return 350 * Math.abs(Math.sin(val / 4));
-        };
-        this.randomOLDT = function (val) {
-            return 350 * Math.random();
-        };
-        console.log("helloo");
         this.setup();
-        this.drawTest({
-            title: 'Linear battery drain scenario',
-            domElementId: 'score-adjuster-test-linear',
-            batteryDrainFunction: this.linearOLDT
+        this.drawTestOne({
+            title: 'Scenario One',
+            domElementId: 'score-computer-test-one',
         });
-        this.drawTest({
-            title: 'Exponential battery drain scenario',
-            domElementId: 'score-adjuster-test-exponential',
-            batteryDrainFunction: this.exponentialOLDT
-        });
-        this.drawTest({
-            title: 'Periodic battery drain scenario',
-            domElementId: 'score-adjuster-test-periodic',
-            batteryDrainFunction: this.periodicOLDT
-        });
-        this.drawTest({
-            title: 'Randromised battery drain scenario',
-            domElementId: 'score-adjuster-test-random',
-            batteryDrainFunction: this.randomOLDT
+        this.drawTestTwo({
+            title: 'Scenario two',
+            domElementId: 'score-computer-test-two'
         });
     }
-    ScoreAdjusterTester.prototype.drawTest = function (testInfo) {
-        this.beforeEach();
-        for (var i = 0; i < 20; ++i) {
-            var oldtValue = testInfo.batteryDrainFunction(i);
-            this.scoreAdjuster._ctr.setSampling(oldtValue);
-            this.scoreAdjuster.dataAvailable(oldtValue);
-            this.x.push(i);
-            this.adjusterY.push(this.scoreAdjuster.adjustment);
-            this.oldtY.push(oldtValue);
-        }
-        var adjusterTrace = {
-            x: this.x,
-            y: this.adjusterY,
-            name: 'adjuster trace',
-            type: 'scatter'
-        };
-        var oldtTrace = {
-            x: this.x,
-            y: this.oldtY,
-            xaxis: 'x2',
-            yaxis: 'y2',
-            name: 'OLDT trace',
-            type: 'scatter'
-        };
+    ScoreComputerTester.prototype.drawTestOne = function (testInfo) {
+        var traces = this.buildScenarioOne();
         var layout = {
             xaxis: {
-                title: 'sample',
+                title: 'time (min)',
                 type: 'number',
             },
             yaxis: {
-                title: 'adjustment',
+                title: 'score / battery',
                 type: 'number',
-                range: [-1.1, 1.1],
-                domain: [0, 0.45],
-            },
-            xaxis2: {
-                anchor: 'y2',
-                type: 'number'
-            },
-            yaxis2: {
-                title: 'One Level Drop Time',
-                type: 'number',
-                domain: [0.55, 1]
+                range: [0, 1]
             },
             title: testInfo.title
         };
-        var data = [adjusterTrace, oldtTrace];
+        var data = [traces[0], traces[1]];
         Plotly.newPlot(testInfo.domElementId, data, layout);
     };
-    ScoreAdjusterTester.prototype.beforeEach = function () {
-        this.x = [];
-        this.adjusterY = [];
-        this.oldtY = [];
-        this.scoreAdjuster._ctr.reset();
+    ScoreComputerTester.prototype.drawTestTwo = function (testInfo) {
+        var traces = this.buildScenarioTwo();
+        var layout = {
+            xaxis: {
+                title: 'time (min)',
+                type: 'number',
+            },
+            yaxis: {
+                title: 'score / battery',
+                type: 'number',
+                range: [0, 1]
+            },
+            title: testInfo.title
+        };
+        var data = [traces[0], traces[1]];
+        Plotly.newPlot(testInfo.domElementId, data, layout);
     };
-    ScoreAdjusterTester.prototype.setup = function () {
-        this.device = new Device_1.Device();
-        var mockedBattery = ts_mockito_1.mock(Battery_1.Battery);
+    ScoreComputerTester.prototype.buildScenarioOne = function () {
+        var x = [];
+        var y = [];
+        var y2 = [];
+        var batteryLevel = 1;
+        ts_mockito_1.when(this.mockedBattery.level).thenReturn(batteryLevel);
+        ts_mockito_1.when(this.mockedNetwork.type).thenReturn(Network_1.ConnectionType.wifi);
+        ts_mockito_1.when(this.mockedNetwork.downlink).thenReturn(this.scoreComputer._downlinkLimit);
+        ts_mockito_1.when(this.mockedNetwork.uplink).thenReturn(this.scoreComputer._uplinkLimit);
+        var sampleNum = 200;
+        for (var sampleCount = 0; sampleCount < sampleNum; sampleCount++) {
+            ts_mockito_1.when(this.mockedBattery.dischargingTimeInSeconds)
+                .thenReturn(this.scoreComputer._dischargingTimeLimit * batteryLevel);
+            if (sampleCount <= sampleNum / 2) {
+                ts_mockito_1.when(this.mockedBattery.isCharging).thenReturn(false);
+                batteryLevel -= (1 / (this.linearOLDT(sampleCount) / 60)) / 100;
+            }
+            else {
+                ts_mockito_1.when(this.mockedBattery.isCharging).thenReturn(true);
+                batteryLevel += (1 / (this.linearOLDT(sampleCount) / 60)) / 100;
+            }
+            ts_mockito_1.when(this.mockedBattery.level).thenReturn(batteryLevel);
+            this.scoreComputer._scoreAdjuster._ctr.setSampling(this.linearOLDT(sampleCount));
+            this.scoreComputer._scoreAdjuster.dataAvailable(this.linearOLDT(sampleCount));
+            this.scoreComputer.compute();
+            x.push(sampleCount);
+            y.push(this.scoreComputer.ActualScore);
+            y2.push(batteryLevel);
+        }
+        var scoreTrace = {
+            x: x,
+            y: y,
+            name: "score trace",
+            type: "scatter"
+        };
+        var batteryTrace = {
+            x: x,
+            y: y2,
+            name: "battery trace",
+            type: "scatter"
+        };
+        return [scoreTrace, batteryTrace];
+    };
+    ScoreComputerTester.prototype.buildScenarioTwo = function () {
+        var x = [];
+        var y = [];
+        var y2 = [];
+        var batteryLevel = 1;
+        ts_mockito_1.when(this.mockedNetwork.type).thenReturn(Network_1.ConnectionType.wifi);
+        ts_mockito_1.when(this.mockedBattery.level).thenReturn(batteryLevel);
+        ts_mockito_1.when(this.mockedBattery.isCharging).thenReturn(false);
+        var sampleNum = 40;
+        for (var sampleCount = 0; sampleCount < sampleNum; sampleCount++) {
+            ts_mockito_1.when(this.mockedBattery.dischargingTimeInSeconds)
+                .thenReturn(this.scoreComputer._dischargingTimeLimit * batteryLevel);
+            if (sampleCount <= sampleNum / 3) {
+                ts_mockito_1.when(this.mockedNetwork.downlink).thenReturn(this.scoreComputer._downlinkLimit / 2);
+                ts_mockito_1.when(this.mockedNetwork.uplink).thenReturn(this.scoreComputer._uplinkLimit / 2);
+                batteryLevel -= (1 / (this.linearOLDT(sampleCount) / 60)) / 100;
+                this.scoreComputer._scoreAdjuster._ctr.setSampling(this.linearOLDT(sampleCount));
+                this.scoreComputer._scoreAdjuster.dataAvailable(this.linearOLDT(sampleCount));
+            }
+            else {
+                ts_mockito_1.when(this.mockedNetwork.downlink).thenReturn(this.scoreComputer._downlinkLimit);
+                ts_mockito_1.when(this.mockedNetwork.uplink).thenReturn(this.scoreComputer._uplinkLimit);
+                batteryLevel -= (1 / (this.exponentialOLDT(sampleCount) / 60)) / 100;
+                this.scoreComputer._scoreAdjuster._ctr.setSampling(this.exponentialOLDT(sampleCount));
+                this.scoreComputer._scoreAdjuster.dataAvailable(this.exponentialOLDT(sampleCount));
+            }
+            ts_mockito_1.when(this.mockedBattery.level).thenReturn(batteryLevel);
+            this.scoreComputer.compute();
+            x.push(sampleCount);
+            y.push(this.scoreComputer.ActualScore);
+            y2.push(batteryLevel);
+        }
+        var scoreTrace = {
+            x: x,
+            y: y,
+            name: "score trace",
+            type: "scatter"
+        };
+        var batteryTrace = {
+            x: x,
+            y: y2,
+            name: "battery trace",
+            type: "scatter"
+        };
+        return [scoreTrace, batteryTrace];
+    };
+    ScoreComputerTester.prototype.setup = function () {
+        this.mockedBattery = ts_mockito_1.mock(Battery_1.Battery);
+        this.mockedNetwork = ts_mockito_1.mock(Network_1.Network);
         var mockedEvent = ts_mockito_1.mock(Event_1.Event);
-        ts_mockito_1.when(mockedBattery.OLDTChanged).thenReturn(ts_mockito_1.instance(mockedEvent));
-        this.device.battery = ts_mockito_1.instance(mockedBattery);
-        this.scoreAdjuster = new ScoreAdjuster_1.ScoreAdjuster(this.device);
-        this.scoreAdjuster._ctr = new PIDController_1.PIDController({
-            k_p: 0.4,
-            k_i: 0.3,
-            k_d: 0.1,
-            i_max: 300
+        ts_mockito_1.when(this.mockedBattery.OLDTChanged).thenReturn(ts_mockito_1.instance(mockedEvent));
+        ts_mockito_1.when(this.mockedBattery.ChargingChanged).thenReturn(ts_mockito_1.instance(mockedEvent));
+        this.scoreComputer = new ScoreComputer_1.ScoreComputer(ts_mockito_1.instance(this.mockedBattery), ts_mockito_1.instance(this.mockedNetwork));
+        this.scoreComputer._scoreAdjuster._ctr = new PIDController_1.PIDController({
+            k_p: 0.5,
+            k_i: 0.5,
+            k_d: 0.5,
+            i_max: 200
         });
-        var targetOneLevelDropTime = 240;
-        this.scoreAdjuster._ctr.setTarget(targetOneLevelDropTime);
+        var targetOneLevelDropTime = 20;
+        this.scoreComputer._scoreAdjuster._ctr.setTarget(targetOneLevelDropTime);
     };
-    return ScoreAdjusterTester;
+    return ScoreComputerTester;
 }());
-exports.ScoreAdjusterTester = ScoreAdjusterTester;
+exports.ScoreComputerTester = ScoreComputerTester;
+
+
+/***/ }),
+/* 51 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var ScoreAdjuster_1 = __webpack_require__(8);
+var Network_1 = __webpack_require__(14);
+var Event_1 = __webpack_require__(2);
+var Battery_1 = __webpack_require__(5);
+__webpack_require__(9);
+var weights;
+(function (weights) {
+    weights[weights["batteryLevel"] = 0.3] = "batteryLevel";
+    weights[weights["batteryDischargingTime"] = 0.3] = "batteryDischargingTime";
+    weights[weights["downloadSpeed"] = 0.15] = "downloadSpeed";
+    weights[weights["uploadSpeed"] = 0.15] = "uploadSpeed";
+    weights[weights["adjustment"] = 0.1] = "adjustment";
+})(weights = exports.weights || (exports.weights = {}));
+var ScoreComputer = (function () {
+    function ScoreComputer(battery, network) {
+        this.ScoreComputed = new Event_1.Event();
+        this._battery = battery === undefined ? new Battery_1.Battery() : battery;
+        this._network = network === undefined ? new Network_1.Network() : network;
+        this._battery.ChargingChanged.on(this);
+        this._scoreAdjuster = new ScoreAdjuster_1.ScoreAdjuster(this._battery);
+        this._actualScore = 1;
+        this._downlinkLimit = 2.5;
+        this._uplinkLimit = 1;
+        this._dischargingTimeLimit = 7200;
+    }
+    ScoreComputer.prototype.start = function () {
+        var _this = this;
+        setInterval(function () {
+            _this.compute();
+        }, 10000);
+    };
+    ScoreComputer.prototype.dataAvailable = function (batteryChargingInfo) {
+        this.compute();
+    };
+    ScoreComputer.prototype.subscribe = function (client) {
+        if (this._network.Client === undefined) {
+            this._network.Client = client;
+        }
+        if (this._battery.Client === undefined) {
+            this._battery.Client = client;
+        }
+        this.ScoreComputed.on(client);
+    };
+    ScoreComputer.prototype.unsubscribe = function (client) {
+        this._network.Client = undefined;
+        this.ScoreComputed.off(client);
+    };
+    ScoreComputer.prototype.compute = function () {
+        var battery = this.Battery;
+        var network = this.Network;
+        if (network.type === Network_1.ConnectionType.cellular ||
+            (battery.level < 0.15 && !battery.isCharging)) {
+            this._actualScore = 0;
+            this.ScoreComputed.trigger(this._actualScore);
+            console.log("Network type: Cellular.");
+            console.log("OR");
+            console.log("Battery level is under 15% AND device is not charging.");
+            console.log("------(SCORE = 0)------");
+            return;
+        }
+        if ((network.type === Network_1.ConnectionType.wifi ||
+            network.type === Network_1.ConnectionType.ethernet) &&
+            battery.isCharging) {
+            this._actualScore = 1;
+            this.ScoreComputed.trigger(this._actualScore);
+            console.log("Network type: WIFI OR ETHERNET.");
+            console.log("AND");
+            console.log("Device is charging.");
+            console.log("------(SCORE = 1)------");
+            return;
+        }
+        var score = 0;
+        var infoTable = [];
+        score += battery.level * weights.batteryLevel;
+        var levelInfo = {
+            property: "battery level",
+            value: battery.level,
+            weigth: weights.batteryLevel,
+            scoreTag: battery.level * weights.batteryLevel
+        };
+        infoTable.push(levelInfo);
+        var dischargingTimeScore = battery.dischargingTimeInSeconds / this._dischargingTimeLimit;
+        dischargingTimeScore = dischargingTimeScore < 1 ? dischargingTimeScore : 1;
+        score += dischargingTimeScore * weights.batteryDischargingTime;
+        var dischargeInfo = {
+            property: "discharging time score",
+            value: dischargingTimeScore,
+            weigth: weights.batteryDischargingTime,
+            scoreTag: dischargingTimeScore * weights.batteryDischargingTime
+        };
+        infoTable.push(dischargeInfo);
+        var dSpeedScore = (network.downlink / this._downlinkLimit);
+        var uSpeedScore = (network.uplink / this._uplinkLimit);
+        dSpeedScore = dSpeedScore < 1 ? dSpeedScore : 1;
+        uSpeedScore = uSpeedScore < 1 ? uSpeedScore : 1;
+        score += dSpeedScore * weights.downloadSpeed;
+        score += uSpeedScore * weights.uploadSpeed;
+        score += this._scoreAdjuster.adjustment * weights.adjustment;
+        score = score < 0 ? 0 : score;
+        this._actualScore = score;
+        this.ScoreComputed.trigger(score);
+        var downlinkInfo = {
+            property: "downlink",
+            value: dSpeedScore,
+            weigth: weights.downloadSpeed,
+            scoreTag: dSpeedScore * weights.downloadSpeed
+        };
+        var uplinkInfo = {
+            property: "uplink",
+            value: uSpeedScore,
+            weigth: weights.uploadSpeed,
+            scoreTag: uSpeedScore * weights.uploadSpeed
+        };
+        var adjusterInfo = {
+            property: "adjustment",
+            value: this._scoreAdjuster.adjustment,
+            weigth: weights.adjustment,
+            scoreTag: this._scoreAdjuster.adjustment * weights.adjustment
+        };
+        var scoreInfo = {
+            property: "TOTAL SCORE",
+            value: "----",
+            weigth: "----",
+            scoreTag: score
+        };
+        infoTable.push(downlinkInfo, uplinkInfo, adjusterInfo, scoreInfo);
+        console.table(infoTable);
+    };
+    Object.defineProperty(ScoreComputer.prototype, "ActualScore", {
+        get: function () {
+            return this._actualScore;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ScoreComputer.prototype, "Battery", {
+        get: function () {
+            if (this.ScoreComputed.hasListener) {
+                this._battery.maintainBatteryInfos(10);
+            }
+            return this._battery;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ScoreComputer.prototype, "Network", {
+        get: function () {
+            return this._network;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    return ScoreComputer;
+}());
+exports.ScoreComputer = ScoreComputer;
 
 
 /***/ })

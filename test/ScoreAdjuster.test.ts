@@ -1,5 +1,4 @@
 import {ScoreAdjuster} from "../model/ScoreAdjuster"
-import {Device} from "../model/Device"
 import {Battery} from "../model/Battery"
 import {PIDController, Options} from "../model/PIDController"
 import {Event} from "../model/Event"
@@ -16,7 +15,6 @@ interface ITest{
 
 export class ScoreAdjusterTester{
 
-    private device: Device
     private scoreAdjuster: ScoreAdjuster
     private pidController: PIDController
     private x: number[]
@@ -107,7 +105,7 @@ export class ScoreAdjusterTester{
             yaxis: {
                 title: 'adjustment',
                 type: 'number',
-                range: [-1.1, 1.1],
+                range: [0, 1],
                 domain: [0, 0.45],
             }, 
 
@@ -139,21 +137,20 @@ export class ScoreAdjusterTester{
     }
 
     private setup(){
-        this.device = new Device()
         let mockedBattery = mock(Battery)
         let mockedEvent = mock(Event)
 
         when(mockedBattery.OLDTChanged).thenReturn(instance(mockedEvent))
-        this.device.battery = instance(mockedBattery)
-        this.scoreAdjuster = new ScoreAdjuster(this.device)
+        
+        this.scoreAdjuster = new ScoreAdjuster(instance(mockedBattery))
 
         this.scoreAdjuster._ctr = new PIDController({
-            k_p : 0.4,
-            k_i : 0.3,
-            k_d : 0.1,
-            i_max : 300
+            k_p : 0.8,
+            k_i : 0.4,
+            k_d : 0.3,
+            i_max : 500
         })
-        let targetOneLevelDropTime = 240 // one level drain in 4 minutes
+        let targetOneLevelDropTime = 300 // one level drain in 5 minutes
         this.scoreAdjuster._ctr.setTarget(targetOneLevelDropTime)
     }
 }
