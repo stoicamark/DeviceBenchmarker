@@ -49,11 +49,11 @@ export class ScoreComputerTester{
 
         let layout = {
             xaxis: {
-                title: 'time (min)',
+                title: 'Idő (perc)',
                 type: 'number',
             },
             yaxis: {
-                title: 'score / battery',
+                title: 'Pontszám / Töltöttségi szint',
                 type: 'number',
                 range: [0, 1]
             },
@@ -70,11 +70,11 @@ export class ScoreComputerTester{
 
         let layout = {
             xaxis: {
-                title: 'time (min)',
+                title: 'Idő (perc)',
                 type: 'number',
             },
             yaxis: {
-                title: 'score / battery',
+                title: 'Pontszám / Töltöttségi szint',
                 type: 'number',
                 range: [0, 1]
             },

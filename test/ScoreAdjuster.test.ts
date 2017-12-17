@@ -99,11 +99,11 @@ export class ScoreAdjusterTester{
 
         let layout = {
             xaxis: {
-                title: 'sample',
+                title: 'Mintavétel',
                 type: 'number',
             },
             yaxis: {
-                title: 'adjustment',
+                title: 'Pontszám kompenzáció',
                 type: 'number',
                 range: [0, 1],
                 domain: [0, 0.45],
@@ -115,7 +115,7 @@ export class ScoreAdjusterTester{
             },
 
             yaxis2: {
-                title: 'One Level Drop Time',
+                title: 'OLDT [*] (sec)',
                 type: 'number',
                 domain: [0.55, 1]
             },

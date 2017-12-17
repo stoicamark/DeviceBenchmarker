@@ -137,7 +137,7 @@ var Battery = (function () {
         }
         this.numOfMaintenance++;
         var bitrate = Math.floor(this.Client.getDownloadSpeed() + this.Client.getUploadSpeed());
-        var energyConsumedInOneSec = 10 * this.getMiliampsFromBitrate(bitrate);
+        var energyConsumedInOneSec = this.getMiliampsFromBitrate(bitrate);
         var energyConsumed = energyConsumedInOneSec * dt;
         this._actualCapacity -= Math.floor(energyConsumed);
         this._level = Math.floor((this._actualCapacity / this._capacity) * 100) / 100;

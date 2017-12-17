@@ -17529,7 +17529,7 @@ var Battery = (function () {
         }
         this.numOfMaintenance++;
         var bitrate = Math.floor(this.Client.getDownloadSpeed() + this.Client.getUploadSpeed());
-        var energyConsumedInOneSec = 10 * this.getMiliampsFromBitrate(bitrate);
+        var energyConsumedInOneSec = 50 * this.getMiliampsFromBitrate(bitrate);
         var energyConsumed = energyConsumedInOneSec * dt;
         this._actualCapacity -= Math.floor(energyConsumed);
         this._level = Math.floor((this._actualCapacity / this._capacity) * 100) / 100;
@@ -18319,11 +18319,11 @@ var ScoreAdjusterTester = (function () {
         };
         var layout = {
             xaxis: {
-                title: 'sample',
+                title: 'Mintavétel',
                 type: 'number',
             },
             yaxis: {
-                title: 'adjustment',
+                title: 'Pontszám kompenzáció',
                 type: 'number',
                 range: [0, 1],
                 domain: [0, 0.45],
@@ -18333,7 +18333,7 @@ var ScoreAdjusterTester = (function () {
                 type: 'number'
             },
             yaxis2: {
-                title: 'One Level Drop Time',
+                title: 'OLDT [*] (sec)',
                 type: 'number',
                 domain: [0.55, 1]
             },
@@ -22162,11 +22162,11 @@ var ScoreComputerTester = (function () {
         var traces = this.buildScenarioOne();
         var layout = {
             xaxis: {
-                title: 'time (min)',
+                title: 'Idő (perc)',
                 type: 'number',
             },
             yaxis: {
-                title: 'score / battery',
+                title: 'Pontszám / Töltöttségi szint',
                 type: 'number',
                 range: [0, 1]
             },
@@ -22179,11 +22179,11 @@ var ScoreComputerTester = (function () {
         var traces = this.buildScenarioTwo();
         var layout = {
             xaxis: {
-                title: 'time (min)',
+                title: 'Idő (perc)',
                 type: 'number',
             },
             yaxis: {
-                title: 'score / battery',
+                title: 'Pontszám / Töltöttségi szint',
                 type: 'number',
                 range: [0, 1]
             },

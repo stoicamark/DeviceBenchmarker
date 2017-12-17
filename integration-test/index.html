@@ -57,7 +57,7 @@
                         filterPeerRecords(peerArray)
                         plot(peerArray)
                     }else{
-                        filterPeerRecords(peerArray)
+                        filterPeerRecords(sortedPeers)
                         plot(sortedPeers)
                     }
                 }
@@ -109,7 +109,7 @@
             for(let i=0; i<peers.length; ++i){
                 let prevBatteryLevel = 1
                 peers[i] = peers[i].filter(record => {
-                    let isSmaller = record.batteryLevel <= prevBatteryLevel
+                    let isSmaller = record.batteryLevel < prevBatteryLevel
                     if(isSmaller){
                         prevBatteryLevel = record.batteryLevel
                     }
@@ -143,15 +143,15 @@
             
             let layout = {
                 xaxis: {
-                    title: 'time',
+                    title: 'Idő(perc)',
                     type: 'number',
                 },
                 yaxis: {
-                    title: 'battery level',
+                    title: 'Töltöttségi szint',
                     type: 'number',
                 },
 
-                title: "Adaptive cache test with benchmarker"
+                title: "Az alap - DeviceBenchmarker nélküli - teszt"
             }
 
             TESTER = document.getElementById('integration-test')

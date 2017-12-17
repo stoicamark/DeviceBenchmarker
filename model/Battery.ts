@@ -184,7 +184,7 @@ export class Battery{
 
         let bitrate = Math.floor(this.Client.getDownloadSpeed() + this.Client.getUploadSpeed())
         
-        let energyConsumedInOneSec = 10 * this.getMiliampsFromBitrate(bitrate)
+        let energyConsumedInOneSec = this.getMiliampsFromBitrate(bitrate)
         let energyConsumed = energyConsumedInOneSec * dt
         
         this._actualCapacity -= Math.floor(energyConsumed)

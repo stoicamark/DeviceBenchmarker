@@ -19,7 +19,7 @@ export class ScoreAdjuster implements Subscriber<number>{
         this._adjustment = 1
         this._battery = battery
         this._maxAdjustment = 500
-        this._targetBatteryLevelDropTime = 180 // 1 level drop in 5 minutes
+        this._targetBatteryLevelDropTime = 180
         
         this._ctr = new PIDController({
           k_p: 0.8,
