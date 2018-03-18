@@ -16,7 +16,9 @@
     "url": "https://github.com/stoicamark/DeviceBenchmarker/issues"
   },
   "devDependencies": {
+    "ts-loader": "^4.1.0",
     "ts-mockito": "^2.2.7",
-    "webpack": "^3.7.1"
+    "typescript": "^2.7.2",
+    "webpack": "^4.1.1"
   }
 }

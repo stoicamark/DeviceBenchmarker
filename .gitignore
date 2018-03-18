@@ -1,0 +1,10 @@
+.npmignore
+.DS_Store
+.idea/
+*.d.ts
+!*spec.js
+!*config.js
+web/
+demo/
+node_modules/
+dist/
