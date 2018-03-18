@@ -1,5 +1,6 @@
 <html>
     <head>
+        <meta charset="UTF-8">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     </head>
                 
@@ -30,40 +31,40 @@
     </script>
     
     <script>
-        let filterCheckBox = document.getElementById('filter')
-        let peerNumInput = document.getElementById('peerNum')
+        let filterCheckBox = document.getElementById('filter');
+        let peerNumInput = document.getElementById('peerNum');
 
         function readBlob() {
-    
-            var files = document.getElementById('files').files;
+
+            let files = document.getElementById('files').files;
             if (!files.length) {
                 alert('Please select a file!');
                 return;
             }
-        
-            var file = files[0];
-        
-            var reader = new FileReader();
-        
+
+            let file = files[0];
+
+            let reader = new FileReader();
+
             // If we use onloadend, we need to check the readyState.
             reader.onloadend = function(evt) {
-                if (evt.target.readyState == FileReader.DONE) { // DONE == 2
+                if (evt.target.readyState === FileReader.DONE) { // DONE == 2
                     let textContent = evt.target.result;
-                    let sortedPeers = parseData(textContent)
+                    let sortedPeers = parseData(textContent);
                     
                     if(filterCheckBox.checked){
-                        let peerNum = parseInt(peerNumInput.value)
-                        let peerArray = sortedPeers.slice(0, peerNum)
-                        filterPeerRecords(peerArray)
-                        plot(peerArray)
+                        let peerNum = parseInt(peerNumInput.value);
+                        let peerArray = sortedPeers.slice(0, peerNum);
+                        filterPeerRecords(peerArray);
+                        plot(peerArray);
                     }else{
-                        filterPeerRecords(sortedPeers)
-                        plot(sortedPeers)
+                        filterPeerRecords(sortedPeers);
+                        plot(sortedPeers);
                     }
                 }
             };
 
-            var blob = file.slice(0, file.size);
+            let blob = file.slice(0, file.size);
             reader.readAsText(blob);
         }
 
@@ -72,48 +73,46 @@
         let recordCounts = {};
 
         function parseData(textContent){
-            this.obj = JSON.parse(textContent)
+            this.obj = JSON.parse(textContent);
 
-            var peerKey = function(peerRecord){
+            let peerKey = function (peerRecord) {
                 return peerRecord.id;
-            }
+            };
 
             this.obj.forEach(record => {
                 if(dict[peerKey(record)] === undefined){
-                    dict[peerKey(record)] = []
+                    dict[peerKey(record)] = [];
                 }
-                dict[peerKey(record)].push(record)
-            })
+                dict[peerKey(record)].push(record);
+            });
 
-            for(var key in dict){
-                let peer = dict[key]
-                recordCounts[key] = peer.length
+            for(let key in dict){
+                let peer = dict[key];
+                recordCounts[key] = peer.length;
             }
 
-            let sortedPeers = Object.keys(dict)
+            return Object.keys(dict)
                 .sort(
-                    function(a, b){
-                        return dict[b].length - dict[a].length
+                    function (a, b) {
+                        return dict[b].length - dict[a].length;
                     }
                 )
                 .map(
-                    function(k){
-                        return dict[k]
+                    function (k) {
+                        return dict[k];
                     }
-                );
-            
-            return sortedPeers
+                )
         }
 
         function filterPeerRecords(peers){
             for(let i=0; i<peers.length; ++i){
-                let prevBatteryLevel = 1
+                let prevBatteryLevel = 1;
                 peers[i] = peers[i].filter(record => {
-                    let isSmaller = record.batteryLevel < prevBatteryLevel
+                    let isSmaller = record.batteryLevel < prevBatteryLevel;
                     if(isSmaller){
-                        prevBatteryLevel = record.batteryLevel
+                        prevBatteryLevel = record.batteryLevel;
                     }
-                    return isSmaller
+                    return isSmaller;
                 })
             }
         }
@@ -122,24 +121,24 @@
             let traces = [];
 
             peers.forEach(peer=>{
-                let x = []
-                let y = []
+                let x = [];
+                let y = [];
 
                 peer.forEach(record => {
-                    y.push(record.batteryLevel)
-                    x.push(record.timeStamp)
-                })
+                    y.push(record.batteryLevel);
+                    x.push(record.timeStamp);
+                });
 
                 let trace = {
                     x: x,
                     y: y,
                     name: peer[0].id,
                     type: 'scatter'
-                }
-                traces.push(trace)
-            })
+                };
+                traces.push(trace);
+            });
  
-            console.log(traces)
+            console.log(traces);
             
             let layout = {
                 xaxis: {
@@ -152,10 +151,10 @@
                 },
 
                 title: "Az alap - DeviceBenchmarker nélküli - teszt"
-            }
+            };
 
-            TESTER = document.getElementById('integration-test')
-            Plotly.plot(TESTER, traces, layout)
+            TESTER = document.getElementById('integration-test');
+            Plotly.plot(TESTER, traces, layout);
         }
     </script>
 </html>
