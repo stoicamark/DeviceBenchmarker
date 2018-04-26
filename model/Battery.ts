@@ -35,6 +35,8 @@ export class Battery{
     private _capacity?: number;
     private _actualCapacity?: number;
 
+    private _drainScale: number = 1;
+
     // kiloByte per ses to Joules per s
     private bitrateToJoulesPerSec: {[keyBitrate : number]: number } = {
         [0]:0,
@@ -170,9 +172,16 @@ export class Battery{
         this.reset();
     }
 
+    set DrainScale(value: number){
+        if(value > 1){
+            this._drainScale = value;
+        }
+    }
+
     private numOfMaintenance: number;
     private sumOLDT: number;
 
+    //scale is for fasten testing
     public maintainBatteryInfos(dt: number){
         if(!this.Client){
             return
@@ -182,7 +191,7 @@ export class Battery{
         let bitrate = Math.floor(this.Client.getDownloadSpeed() + this.Client.getUploadSpeed());
         
         let energyConsumedInOneSec = this.getMiliampsFromBitrate(bitrate);
-        let energyConsumed = energyConsumedInOneSec * dt;
+        let energyConsumed = this._drainScale * energyConsumedInOneSec * dt;
         
         this._actualCapacity -= Math.floor(energyConsumed);
         this._level = Math.floor((this._actualCapacity / this._capacity) * 100) / 100;
